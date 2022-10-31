@@ -1,6 +1,7 @@
 import time,datetime
 import signal,subprocess
 from django.shortcuts import render
+from django.views import View
 
 from time import sleep
 from wifiINFO.utils import *
@@ -18,9 +19,10 @@ def func_B():
 
 
 #获取mon接口
-def get_interface():
+def get_interfaces():
     '''Returns List of AirmonIface objects known by airmon-ng'''
     p = run_cmd(['airmon-ng'])
+    interfaces = []
 
     for line in p.split('\n'):
         # [PHY ]IFACE DRIVER CHIPSET
@@ -30,13 +32,14 @@ def get_interface():
             continue
 
         phy, interface, driver, chipset = matches.groups(1)
+        interfaces.append(interface)
         if phy == 'PHY' or phy == 'Interface':
             continue  # Header
 
         if len(interface.strip()) == 0:
             continue
 
-    return interface
+    return interfaces
 
 
 #Wi-Fi表格式
@@ -200,34 +203,19 @@ def data_station(station_lines):
     )
 
 
-def backend_start(LOGNAME):
- #   remove_files(LOGNAME)
-    LOG = LOGNAME+'-01.csv'
-    start_airmon(LOG)
-
-    count = 0
-    while True:
-        sleep(60)
-        time1 = time.time()
-        wifi_lines, station_lines = file_parse(LOG)
-        data_wifi(wifi_lines)
-        data_station(station_lines)
-        count += 1
-        print(count)
-        time2 = time.time()
-        print('消耗:{}'.format(time2-time1))
-
-
 #启动
 def start_airmon(LOGNAME):
     LOG = LOGNAME+'-01.csv'
     try:
         os.system('rm '+LOG)
-        interface = get_interface()
+        interfaces = get_interfaces()
+
+        monface = interfaces[0]
+        atkface = interfaces[1]
 
         process = subprocess.Popen([
             'airodump-ng',
-            interface,
+            monface,
             '-w',
             LOGNAME,
             '--output-format',
@@ -252,6 +240,28 @@ def start_airmon(LOGNAME):
         return False
 
 
+def first_start(LOGNAME):
+    # remove_files(LOGNAME)
+    LOG = LOGNAME+'-01.csv'
+    time1 = time.time()
+    pid = start_airmon(LOG)
+    print(pid)
+    time2 = time.time()
+    print(time2 - time1)
+
+    count = 0
+    while True:
+        sleep(60)
+        time1 = time.time()
+        wifi_lines, station_lines = file_parse(LOG)
+        data_wifi(wifi_lines)
+        data_station(station_lines)
+        count += 1
+        print(count)
+        time2 = time.time()
+        print('消耗:{}'.format(time2-time1))
+
+
 #Deauth
 def deauth(interface, bssid):
     try:
@@ -270,3 +280,27 @@ def deauth(interface, bssid):
         print(e)
 
 
+
+
+"""
+------------------------------------------------------------------------------------------
+View类
+------------------------------------------------------------------------------------------
+"""
+class Mywifi(View):
+    def get(self,request):
+        return render(request,'wifi.html')
+    def post(self,request):
+        return render(request,'wifi.html')
+
+
+class Mystation(View):
+    def get(self,request):
+        return render(request,'station.html')
+    def post(self,request):
+        return render(request,'station.html')
+
+def runoob(request):
+    context          = {}
+    context['hello'] = 'Hello World!'
+    return render(request, 'runoob.html', context)

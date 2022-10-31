@@ -45,33 +45,6 @@ def test_back():
 
 
 if __name__ == 'wifiINFO.tests':
-   #  import signal
-   #  import os
-   #  count = 1
-   #
-   #  p = test_back()
-   # # p.terminate()
-   # # p.wait()
-   #
-   #  while True:
-   #
-   #      sleep(3)
-   #
-   #      if os.stat('ABCTEST-01.csv').st_size > 0:
-   #          print(p.pid)
-   #          os.kill(p.pid, signal.SIGKILL)
-   #          print('OK')
-   #          print(count)
-   #          break
-   #
-   #      if count > 10:
-   #          print(p.pid)
-   #          os.kill(p.pid, signal.SIGKILL)
-   #          print('Error')
-   #          break
-   #
-   #      count += 1
-
 
     # backend_start('meituan')
     #test_in()

@@ -63,33 +63,6 @@ def get_dictkey_list(list_name,**kargs):
     return temp_list
 
 
-def list_select(temp_list, **kwargs):
-
-    for temp_dict in temp_list:
-        for kwg in kwargs:
-            if kwargs[kwg] == temp_dict[kwg]:
-                flag =True
-                break
-            else:
-                flag =False
-        else:
-            continue
-        break
-
-    if flag:
-        return temp_dict
-    else:
-        return False
-
-    # for kwg in kwargs:
-    #     for temp_dict in temp_list:
-    #         print(temp_dict)
-    #         print(kwargs[kwg])
-    #         if temp_dict.get(kwg) != kwargs[kwg]:
-    #             return False
-    # return temp_dict
-
-
 def is_null(value):
     if value == '':
         return None
@@ -128,9 +101,4 @@ def myasync(f):
 
 if __name__ == "__main__":
     pass
-# wifi_lines,station_lines =  fileparse('meituan-01.csv')
 
-# print(get_interfaces())
-# print(runcmd("ifconfig").stdout)
-# Wifis = get_wifi(wifi_lines)
-# Stations = get_station(station_lines)

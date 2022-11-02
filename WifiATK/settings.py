@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'wifiINFO',
 ]
 
@@ -138,3 +139,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CRONJOBS = [
+    ('*/1 * * * *', 'wifiINFO.views.cron_log', ' >> /tmp/logs/cronlog.log'), # 注意：/tmp/base_api 目录要手动创建
+    ('*/2 * * * *', 'wifiINFO.views.cron_atk', ' >> /tmp/logs/cronatk.log')
+]

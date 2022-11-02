@@ -1,8 +1,9 @@
 #from django.db.models import Q
 import random, signal
 import datetime, time
+import subprocess
 
-import config
+from wifiINFO import config
 from wifiINFO.utils import *
 from wifiINFO.models import *
 
@@ -32,12 +33,14 @@ def get_interfaces():
             continue
 
         phy, interface, driver, chipset = matches.groups(1)
-        interfaces.append(interface)
+
         if phy == 'PHY' or phy == 'Interface':
             continue  # Header
 
         if len(interface.strip()) == 0:
             continue
+
+        interfaces.append(interface)
 
     return interfaces
 
@@ -208,17 +211,21 @@ def start_airmon():
     LOGNAME = config.get_value('LOGNAME')
     LOG = LOGNAME+'-01.csv'
     try:
-        os.system('rm '+LOG)
+        subprocess.Popen([
+            'rm',
+            LOG,
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
         interfaces = get_interfaces()
+        MONFACE, ATKFACE = interfaces
 
-        config.set_value('MONFACE', interfaces[0])
-        config.set_value('ATKFACE', interfaces[1])
-
+        config.set_value('MONFACE', MONFACE)
+        config.set_value('ATKFACE', ATKFACE)
         process = subprocess.Popen([
             'airodump-ng',
-            config.get_value('MONFACE'),
+            MONFACE,
             '-w',
-            config.get_value('LOGNAME'),
+            LOGNAME,
             '--output-format',
             'csv',
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -226,13 +233,15 @@ def start_airmon():
         print(e)
         return False
 
-    for count in range(0,10):  # 启动
-        time.sleep(3)  # 启动等待
+    for count in range(0,3):  # 启动
+        time.sleep(10)  # 启动等待
 
         if LOG in os.listdir('.'):
-            if os.stat(LOG).st_size > 300:
-               # os.kill(process.pid, signal.SIGKILL)   测试用
+            if os.stat(LOG).st_size > 200:
+               #    测试用
                 return process.pid
+        else:
+            os.kill(process.pid, signal.SIGKILL)
 
     try:
         os.kill(process.pid, signal.SIGKILL)

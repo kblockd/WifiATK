@@ -6,7 +6,8 @@ import atexit
 
 
 def exit_status():
-    os.remove('run.pid')
+    if 'runserver' in sys.argv:
+        os.remove('run.pid')
 
 
 def main():

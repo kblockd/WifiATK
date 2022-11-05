@@ -19,7 +19,7 @@ class WifiinfoConfig(AppConfig):
             return
 
         os.environ['CMDLINERUNNER_RUN_ONCE'] = 'True'
-        open('run.pid','w+').write(str(os.getpid()))
 
         if 'runserver' in sys.argv:
+            open('run.pid', 'w+').write(str(os.getpid()))
             autodiscover_modules('start.py')

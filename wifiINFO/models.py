@@ -50,9 +50,9 @@ class Wifilog(models.Model):
     bssid = models.CharField(db_column='Bssid', unique=True, max_length=255)  # Field name made lowercase.
     essid = models.CharField(db_column='Essid', max_length=30, blank=True, null=True)  # Field name made lowercase.
     channel = models.CharField(db_column='Channel', max_length=10)  # Field name made lowercase.
-    privacy = models.CharField(db_column='Privacy', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    cipher = models.CharField(db_column='Cipher', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    authentication = models.CharField(db_column='Authentication', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    privacy = models.CharField(db_column='Privacy', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    cipher = models.CharField(db_column='Cipher', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    authentication = models.CharField(db_column='Authentication', max_length=255, blank=True, null=True)  # Field name made lowercase.
     first_time = models.DateTimeField(db_column='First_time')  # Field name made lowercase.
     last_time = models.DateTimeField(db_column='Last_time')  # Field name made lowercase.
 

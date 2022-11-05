@@ -91,9 +91,17 @@ def remove_files(file):
             os.remove(temp)
 
 
+def myasync(f):
+    def wrapper(*args, **kwargs):
+        thr = Thread(target=f, args=args, kwargs=kwargs)
+        thr.start()
+    return wrapper
 
-#Deauth
+
+
+#@myasync
 def deauth(ATKFACE, bssid, channel):
+    # Deauth
     try:
         process = subprocess.Popen([
             "mdk4",
@@ -107,17 +115,13 @@ def deauth(ATKFACE, bssid, channel):
             bssid
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        return process.pid
+        return process
 
     except Exception as e:
         print(e)
 
 
-def myasync(f):
-    def wrapper(*args, **kwargs):
-        thr = Thread(target=f, args=args, kwargs=kwargs)
-        thr.start()
-    return wrapper
+
 
 
 if __name__ == "__main__":

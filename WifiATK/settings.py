@@ -141,6 +141,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRONJOBS = [
-    ('*/1 * * * *', 'wifiINFO.wifi.cron_log', ' >> /tmp/cronlog.log'), # 注意：/tmp/base_api 目录要手动创建
-  #  ('*/2 * * * *', 'wifiINFO.wifi.cron_atk', ' >> /tmp/logs/cronatkcr.log')
+    ('*/1 * * * *', 'wifiINFO.wifi.cron_data', ' >> /tmp/crondata.log'),
+    ('*/3 * * * *', 'wifiINFO.wifi.cron_atk', ' >> /tmp/cronatk.log')
 ]

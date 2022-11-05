@@ -6,7 +6,7 @@ import os
 import sys
 
 
-def init_data():
+def init_data(sender, **kwargs):
     from wifiINFO.models import Conf
     if Conf.objects.count() == 0:
         conf_data = {"id": 1, "MONFACE": None, "ATKFACE": None,

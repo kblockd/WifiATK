@@ -17,7 +17,7 @@ class Conf(models.Model):
     ATK_STATUS = models.IntegerField(db_column='ATK_STATUS', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'conf'
 
 
@@ -29,7 +29,7 @@ class Nativelog(models.Model):
     last_time = models.DateTimeField(db_column='Last_time', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'nativeLog'
 
 
@@ -41,7 +41,7 @@ class Stationlog(models.Model):
     last_time = models.DateTimeField(db_column='Last_time', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'stationLog'
         unique_together = (('client', 'bssid', 'essid'), ('client', 'bssid'),)
 
@@ -57,6 +57,6 @@ class Wifilog(models.Model):
     last_time = models.DateTimeField(db_column='Last_time')  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'wifiLog'
         unique_together = (('bssid', 'essid'),)

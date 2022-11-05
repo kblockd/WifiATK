@@ -136,11 +136,11 @@ def data_wifi(wifi_lines):
         else:
             temp_value = old_wifi_query.get(bssid=new_wifi['bssid'])
 
-            temp_value.essid = new_wifi['essid'],
-            temp_value.channel = new_wifi['channel'],
-            temp_value.privacy = new_wifi['privacy'],
-            temp_value.cipher = new_wifi['cipher'],
-            temp_value.authentication = new_wifi['authentication'],
+            temp_value.essid = new_wifi['essid']
+            temp_value.channel = new_wifi['channel']
+            temp_value.privacy = new_wifi['privacy']
+            temp_value.cipher = new_wifi['cipher']
+            temp_value.authentication = new_wifi['authentication']
             temp_value.last_time = datetime.datetime.now()
 
             update_list.append(temp_value)

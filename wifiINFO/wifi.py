@@ -59,7 +59,7 @@ def get_wifi(wifi_lines):
             Wifi = {}
             Wifi['bssid'] = data_list[0].strip() if validate_mac(data_list[0].strip()) else None
             Wifi['essid'] = is_null(data_list[13].strip())
-            Wifi['channel'] = data_list[4].strip()
+            Wifi['channel'] = data_list[3].strip()
             if not str(Wifi['channel']).isdigit():
                 Wifi['channel'] = '-1'
             Wifi['privacy'] = is_null(data_list[5].strip())
@@ -223,7 +223,11 @@ def start_airmon():
             'rm',
             LOG,
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        print(e)
+        return False
 
+    try:
         interfaces = get_interfaces()
         MONFACE, ATKFACE = interfaces
 
@@ -233,7 +237,11 @@ def start_airmon():
             'mode',
             'monitor'
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        print(e)
+        return False
 
+    try:
         config.set_value('MONFACE', MONFACE)
         config.set_value('ATKFACE', ATKFACE)
         process = subprocess.Popen([
@@ -263,27 +271,6 @@ def start_airmon():
         return False
     except:
         return False
-
-
-#Deauth
-def deauth(ATKFACE, bssid, channel):
-    try:
-        process = subprocess.Popen([
-            "mdk4",
-            ATKFACE,
-            "d",
-            "-s",
-            "20",
-            "-c",
-            channel,
-            "-B",
-            bssid
-        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-        return process.pid
-
-    except Exception as e:
-        print(e)
 
 
 def cron_atk():

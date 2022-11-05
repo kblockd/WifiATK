@@ -57,9 +57,11 @@ def get_wifi(wifi_lines):
                 continue
 
             Wifi = {}
-            Wifi['bssid'] = data_list[0].strip()
+            Wifi['bssid'] = data_list[0].strip() if validate_mac(data_list[0].strip()) else None
             Wifi['essid'] = is_null(data_list[13].strip())
             Wifi['channel'] = data_list[4].strip()
+            if not str(Wifi['channel']).isdigit():
+                Wifi['channel'] = '-1'
             Wifi['privacy'] = is_null(data_list[5].strip())
             Wifi['cipher'] = is_null(data_list[6].strip())
             Wifi['authentication'] = is_null(data_list[7].strip())
@@ -85,6 +87,7 @@ def get_station(station_lines):
 
             Station = {}
             Station['client'] = data_list[0].strip()
+            Station['client'] = data_list[0].strip() if validate_mac(data_list[0].strip()) else None
             Station['bssid'] = data_list[5][0:17].strip() if validate_mac(data_list[5][0:17].strip()) else None
             Station['essid'] = is_null(data_list[5][18:].strip())
             Stations.append(Station)
@@ -142,10 +145,13 @@ def data_wifi(wifi_lines):
 
             update_list.append(temp_value)
 
-    Wifilog.objects.bulk_create(create_list)
-    Wifilog.objects.bulk_update(
+    try:
+        Wifilog.objects.bulk_create(create_list)
+        Wifilog.objects.bulk_update(
         update_list, ['essid', 'channel', 'privacy', 'cipher', 'authentication']
-    )
+        )
+    except Exception as e:
+        print(e)
 
 
 def data_station(station_lines):
@@ -199,17 +205,19 @@ def data_station(station_lines):
             temp_value.essid = ','.join(new_essid_list)
             temp_value.last_time = datetime.datetime.now()
             update_list.append(temp_value)
-
-    Stationlog.objects.bulk_create(create_list)
-    Stationlog.objects.bulk_update(
-        update_list, ['essid', 'last_time']
-    )
-
+    try:
+        Stationlog.objects.bulk_create(create_list)
+        Stationlog.objects.bulk_update(
+            update_list, ['essid', 'last_time']
+        )
+    except Exception as e:
+        print(e)
 
 #启动
 def start_airmon():
+    LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
-    LOG = LOGNAME+'-01.csv'
+    LOG = "{}/{}-01.csv".format(LOGDIR,LOGNAME)
     try:
         subprocess.Popen([
             'rm',
@@ -218,6 +226,13 @@ def start_airmon():
 
         interfaces = get_interfaces()
         MONFACE, ATKFACE = interfaces
+
+        subprocess.Popen([
+            'iwconfig',
+            MONFACE,
+            'mode',
+            'monitor'
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         config.set_value('MONFACE', MONFACE)
         config.set_value('ATKFACE', ATKFACE)
@@ -236,7 +251,7 @@ def start_airmon():
     for count in range(0,3):  # 启动
         time.sleep(10)  # 启动等待
 
-        if LOG in os.listdir('.'):
+        if os.path.exists(LOG):
             if os.stat(LOG).st_size > 200:
                #    测试用
                 return process.pid
@@ -272,9 +287,10 @@ def deauth(ATKFACE, bssid, channel):
 
 
 def cron_atk():
-    LOGNAME = config.get_value('LOGNAME')
     ATKFACE = config.get_value('ATKFACE')
-    LOG = LOGNAME + '-01.csv'
+    LOGDIR = config.get_value('LOGDIR')
+    LOGNAME = config.get_value('LOGNAME')
+    LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
     time1 = time.time()
 
     wifi_lines, station_lines = file_parse(LOG)
@@ -296,12 +312,14 @@ def cron_atk():
         return False
 
     time2 = time.time()
+    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     print('CronATK消耗:{}'.format(time2 - time1))
 
 
 def cron_log():
+    LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
-    LOG = LOGNAME + '-01.csv'
+    LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
     time1 = time.time()
 
     wifi_lines, station_lines = file_parse(LOG)
@@ -309,5 +327,6 @@ def cron_log():
     data_station(station_lines)
 
     time2 = time.time()
+    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     print('CronLOG消耗:{}'.format(time2 - time1))
 

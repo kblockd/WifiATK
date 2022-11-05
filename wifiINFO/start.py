@@ -1,8 +1,11 @@
-from .wifi import *
-
+from wifiINFO.wifi import start_airmon
+from wifiINFO import config
+import os
+import time
 
 def first_start(LOGNAME):
-    config._init()
+    # config._init()
+    config.set_value('LOGDIR', os.getcwd())
     config.set_value('LOGNAME', LOGNAME)
     #config.set_value('LOG', 'meituan-01.csv')
 
@@ -25,6 +28,5 @@ def first_start(LOGNAME):
     #     print(count)
     #     time2 = time.time()
     #     print('消耗:{}'.format(time2-time1))
-
 
 first_start('TEST123')

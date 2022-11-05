@@ -2,6 +2,11 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import atexit
+
+
+def exit_status():
+    os.remove('run.pid')
 
 
 def main():
@@ -19,4 +24,5 @@ def main():
 
 
 if __name__ == '__main__':
+    atexit.register(exit_status)
     main()

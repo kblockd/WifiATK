@@ -8,6 +8,19 @@
 from django.db import models
 
 
+class Conf(models.Model):
+    MONFACE = models.CharField(db_column='MONFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    ATKFACE = models.CharField(db_column='ATKFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    LOGNAME = models.CharField(db_column='LOGNAME', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    LOGDIR = models.CharField(db_column='LOGDIR', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    MAIN_STATUS = models.IntegerField(db_column='MAIN_STATUS', blank=True, null=True)  # Field name made lowercase.
+    ATK_STATUS = models.IntegerField(db_column='ATK_STATUS', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'conf'
+
+
 class Nativelog(models.Model):
     client = models.CharField(db_column='Client', max_length=17, blank=True, null=True)  # Field name made lowercase.
     bssid = models.CharField(db_column='Bssid', max_length=17, blank=True, null=True)  # Field name made lowercase.
@@ -36,7 +49,7 @@ class Stationlog(models.Model):
 class Wifilog(models.Model):
     bssid = models.CharField(db_column='Bssid', unique=True, max_length=255)  # Field name made lowercase.
     essid = models.CharField(db_column='Essid', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    channel = models.IntegerField(db_column='Channel')  # Field name made lowercase.
+    channel = models.CharField(db_column='Channel', max_length=10)  # Field name made lowercase.
     privacy = models.CharField(db_column='Privacy', max_length=10, blank=True, null=True)  # Field name made lowercase.
     cipher = models.CharField(db_column='Cipher', max_length=10, blank=True, null=True)  # Field name made lowercase.
     authentication = models.CharField(db_column='Authentication', max_length=10, blank=True, null=True)  # Field name made lowercase.

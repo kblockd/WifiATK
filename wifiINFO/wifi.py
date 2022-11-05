@@ -8,17 +8,6 @@ from wifiINFO.utils import *
 from wifiINFO.models import *
 
 
-@myasync
-def func_A():
-    print("字符串1")
-    time.sleep(5)
-    print("字符串2")
-
-
-def func_B():
-    print("字符串3")
-
-
 def get_interfaces():
     # 获取mon接口
     '''Returns List of AirmonIface objects known by airmon-ng'''
@@ -264,6 +253,7 @@ def start_airmon():
         if os.path.exists(LOG):
             if os.stat(LOG).st_size > 200:
                #    测试用
+                config.set_value('MAIN_STATUS',1)
                 return process.pid
         else:
             os.kill(process.pid, signal.SIGKILL)
@@ -304,6 +294,8 @@ def random_target():
 
 
 def cron_atk():
+    if not config.get_value('MAIN_STATUS'):
+        return
 
     if not config.get_value('ATK_STATUS'):
         return
@@ -336,6 +328,9 @@ def cron_atk():
 
 
 def cron_data():
+    if not config.get_value('MAIN_STATUS'):
+        return
+
     LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
     LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)

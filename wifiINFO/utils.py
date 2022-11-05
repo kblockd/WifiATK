@@ -98,6 +98,16 @@ def myasync(f):
     return wrapper
 
 
+@myasync
+def func_A():
+    print("字符串1")
+    time.sleep(5)
+    print("字符串2")
+
+
+def func_B():
+    print("字符串3")
+
 
 #@myasync
 def deauth(ATKFACE, bssid, channel):
@@ -119,9 +129,6 @@ def deauth(ATKFACE, bssid, channel):
 
     except Exception as e:
         print(e)
-
-
-
 
 
 if __name__ == "__main__":

@@ -7,7 +7,8 @@ import atexit
 
 def exit_status():
     if 'runserver' in sys.argv:
-        os.remove('run.pid')
+        import wifiINFO
+        wifiINFO.models.Conf.objects.filter(id=1).update(MAIN_STATUS=0)
 
 
 def main():

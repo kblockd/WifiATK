@@ -1,4 +1,4 @@
-#from django.db.models import Q
+# -*- coding: utf-8
 import random, signal
 import datetime, time
 import subprocess

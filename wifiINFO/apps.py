@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 # import django.apps
 from django.apps import AppConfig
 from django.utils.module_loading import autodiscover_modules

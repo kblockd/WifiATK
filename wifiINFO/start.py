@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 from wifiINFO.wifi import start_airmon
 from wifiINFO import config
 import os
@@ -12,4 +13,6 @@ def first_start(LOGNAME):
     time2 = time.time()
     print('启动成功，消耗时间：{}'.format(time2-time1))
 
-first_start('TEST123')
+if __name__ == '__main__':
+    pass
+    #first_start('TEST123')

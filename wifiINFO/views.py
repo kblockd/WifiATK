@@ -108,28 +108,28 @@ def attack(request, atkid):
         return False
 
 
-class Native(View):
+class Active(View):
     def get(self,request):
         try:
-            native_data = Nativelog.objects.all().order_by(
+            active_data = Activelog.objects.all().order_by(
                 F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
         except:
             print('\n', '>>>' * 20)
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
-        return render(request, 'native.html',{'native_data':native_data})
+        return render(request, 'active.html',{'active_data':active_data})
 
     def post(self,request):
         try:
-            native_data = Nativelog.objects.all().order_by(
+            active_data = Activelog.objects.all().order_by(
                 F('essid').asc(nulls_last=True)).values()
         except:
             print('\n', '>>>' * 20)
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
-        return render(request, 'native.html', {'native_data': native_data})
+        return render(request, 'active.html', {'active_data': active_data})
 
 
 class Wifi(View):

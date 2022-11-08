@@ -307,7 +307,7 @@ def cron_data():
         return
 
 
-def cron_nativelog():
+def cron_activelog():
     LOG = config.get_value('LOG')
 
     wifi_lines, station_lines = file_parse(LOG)
@@ -337,7 +337,7 @@ def cron_nativelog():
         essid = is_null(essid)
 
         create_list.append(
-            Nativelog(
+            Activelog(
                 bssid=bssid,
                 essid=essid,
                 client=client,
@@ -350,8 +350,8 @@ def cron_nativelog():
 
 
     try:
-        Nativelog.truncate()
-        Nativelog.objects.bulk_create(create_list)
+        Activelog.truncate()
+        Activelog.objects.bulk_create(create_list)
 
     except Exception as e:
         

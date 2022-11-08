@@ -6,18 +6,20 @@ from django.views.generic import RedirectView
 
 
 urlpatterns = [
-    re_path(r'^$', RedirectView.as_view(url='index/')),
+
     path('chart/',views.Chart.as_view()),
     path('empty/', views.Empty.as_view()),
     path('form/', views.Form.as_view()),
-    path('index/', views.Index.as_view()),
     path('tab-panel/', views.Tab_panel.as_view()),
+    path('ui-elements/', views.Ui_elements.as_view()),
 
-    path('native/', views.Native.as_view()),
+    re_path(r'^$', RedirectView.as_view(url='index/')),
+    path('index/', views.Index.as_view()),
+    path('active/', views.Native.as_view()),
     path('wifilog/',views.Wifi.as_view()),
     path('stationlog/',views.Station.as_view()),
 
-    path('ui-elements/', views.Ui_elements.as_view()),
-    path('native/', views.Native.as_view()),
-    path('host/<int:wifi_id>/', views.host_atk, name='host'),
+    path('host/start/<int:wifi_id>/', views.host_atk, name='host'),
+    path('host/stop/<int:wifi_id>/', views.host_atk, name='host'),
+
 ]

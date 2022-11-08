@@ -13,7 +13,7 @@ import signal
 def start_host(host_id):
     stop_host()
     try:
-        target = Nativelog.objects.filter(id=host_id)
+        target = Activelog.objects.filter(id=host_id)
     except Exception as e:
         print(e)
         return False

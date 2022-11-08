@@ -25,7 +25,7 @@ class Conf(models.Model):
         db_table = 'conf'
 
 
-class Nativelog(models.Model):
+class Activelog(models.Model):
     bssid = models.CharField(db_column='Bssid', max_length=17, blank=True, null=True)  # Field name made lowercase.
     essid = models.CharField(db_column='Essid', max_length=500, blank=True, null=True)  # Field name made lowercase.
     client = models.CharField(db_column='Client', max_length=10000, blank=True, null=True)  # Field name made lowercase.

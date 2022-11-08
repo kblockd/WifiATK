@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 from wifiINFO.wifi import *
+from wifiINFO.models import *
+from django.db.models import F
 from wifiINFO.utils import myasync
 import re
 """
@@ -119,5 +121,33 @@ def attack(request, atkid):
         #     cron_atk
         return JsonResponse(wifi)
     except Exception as e:
-        print(e)
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
         return False
+
+
+class Native(View):
+    def get(self,request):
+        try:
+            native_data = Nativelog.objects.all().order_by(
+                F('essid').asc(nulls_last=True)).values()
+        except:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+        return render(request, 'native.html',{'native_data':native_data})
+
+    def post(self,request):
+        try:
+            native_data = Nativelog.objects.all().order_by(
+                F('essid').asc(nulls_last=True)).values()
+        except:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+        return render(request, 'native.html', {'native_data': native_data})
+

@@ -424,7 +424,8 @@ def cron_nativelog():
 
                 client.append(station['client'])
 
-        client = ','.join(client)
+        client = is_null(','.join(client))
+        essid = is_null(essid)
 
         create_list.append(
             Nativelog(
@@ -438,9 +439,11 @@ def cron_nativelog():
             )
         )
 
+
     try:
         Nativelog.truncate()
         Nativelog.objects.bulk_create(create_list)
+
     except Exception as e:
         
         print('\n','>>>' * 20)

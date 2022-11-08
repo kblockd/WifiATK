@@ -83,7 +83,8 @@ DATABASES = {
         "USER": "root",
         "PASSWORD": "test123",
         "HOST": "192.168.31.139",
-        "POST": 3306
+        "POST": 3306,
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 

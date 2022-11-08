@@ -25,15 +25,15 @@ def start_host(host_id):
     if essid is None:
         return False
 
-    dnsmasq, host = hostpid.host(essid, channel)
+    host = hostpid.host(essid, channel)
 
     config.set_value('HOST_PID', host.pid)
-    config.set_value('DNSMASQ_PID', dnsmasq.pid)
+    # config.set_value('DNSMASQ_PID', dnsmasq.pid)
 
     pids = {
         'host_name':essid,
         'host_pid':host.pid,
-        'dnsmasq_pid':dnsmasq.pid,
+        # 'dnsmasq_pid':dnsmasq.pid,
     }
 
     return pids
@@ -41,12 +41,12 @@ def start_host(host_id):
 
 def stop_host():
     try:
-        os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
-        dnsmasq_pid = config.get_value('DNSMASQ_PID')
-        if dnsmasq_pid is not None:
-            os.kill(dnsmasq_pid, signal.SIGKILL)
+        # os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
+        # dnsmasq_pid = config.get_value('DNSMASQ_PID')
+        # if dnsmasq_pid is not None:
+        #     os.kill(dnsmasq_pid, signal.SIGKILL)
 
-        os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
+        # os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
         host_pid = config.get_value('HOST_PID')
         if host_pid is not None:
             os.kill(host_pid, signal.SIGKILL)

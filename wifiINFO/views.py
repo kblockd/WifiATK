@@ -14,12 +14,7 @@ View类
 ------------------------------------------------------------------------------------------
 """
 
-class Index(View):
-    def get(self,request):
-        return render(request, 'index.html')
 
-    def post(self,request):
-        return render(request, 'index.html')
 
 
 class Chart(View):
@@ -106,6 +101,60 @@ def attack(request, atkid):
         print('\n', '>>>' * 20)
         print(traceback.format_exc())
         return False
+
+
+class Index(View):
+    def get(self,request):
+        try:
+            active_wifis = Activelog.objects.count()
+            active_clients = []
+            for active in Activelog.objects.all().values('client'):
+                client = active["client"]
+                if client is not None:
+                    active_clients.append(client.split(','))
+            active_clients = len(active_clients)
+            wifi_logs = Wifilog.objects.count()
+            station_logs = Stationlog.objects.count()
+
+            data_list = {
+                "active_wifis": active_wifis,
+                "active_clients": active_clients,
+                "wifi_logs": wifi_logs,
+                "station_logs": station_logs,
+            }
+        except Exception as e:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+            return False
+        return render(request, 'index.html', {"data_list": data_list})
+
+    def post(self,request):
+        try:
+            active_wifis = Activelog.objects.count()
+            active_clients = []
+            for active in Activelog.objects.all().values('client'):
+                client = active["client"]
+                if client is not None:
+                    active_clients = active_clients.append(client.split(','))
+            active_clients = active_clients.count()
+            wifi_logs = Wifilog.objects.count()
+            station_logs = Stationlog.objects.count()
+
+            data_list = {
+                "active_wifis": active_wifis,
+                "active_clients": active_clients,
+                "wifi_logs": wifi_logs,
+                "station_logs": station_logs,
+            }
+        except Exception as e:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+            return False
+        return render(request, 'index.html', {"data_list": data_list})
 
 
 class Active(View):

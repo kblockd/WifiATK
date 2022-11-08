@@ -1,7 +1,7 @@
 from django.test import TestCase
 
+import wifiINFO.hostapd
 # Create your tests here.
-from .views import backend_start
 #from .models import *
 #from .utils import *
 from .views import *
@@ -24,8 +24,6 @@ def test_in():
     time2 = time.time()
     print("耗时：{}".format(time2 - time1))
 
-def signal_handler(signal, frame):
-    os.killpg(os.getpgid(p.pid), 9)
 
 def test_back():
     import subprocess
@@ -50,9 +48,10 @@ if __name__ == 'wifiINFO.tests':
     #test_in()
     #func_A()
     #func_B()
-    LOGNAME = 'ABCTEST'
+    # LOGNAME = 'ABCTEST'
     time1 = time.time()
-    a = start_airmon(LOGNAME)
-    print(a)
+    wifiINFO.hostapd.host('Meituan',6)
+    # a = start_airmon(LOGNAME)
+    # print(a)
     time2 = time.time()
     print(time2-time1)

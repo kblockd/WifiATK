@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 from wifiINFO.wifi import *
+from wifiINFO.attack import *
 from wifiINFO.models import *
 from django.db.models import F
 from wifiINFO.utils import myasync
@@ -151,3 +152,14 @@ class Native(View):
             print(traceback.format_exc())
         return render(request, 'native.html', {'native_data': native_data})
 
+
+def host_atk(request, wifi_id):
+    try:
+        dnsmasq, host = host_wifi(wifi_id)
+        pids = {
+            'dnsmasq_pid': dnsmasq.pid,
+            'host_pid': host.pid,
+        }
+        return JsonResponse(pids)
+    except Exception as e:
+        print(e)

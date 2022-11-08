@@ -1,47 +1,8 @@
 # coding = utf-8
 import os
 import subprocess
-
-
-def dnsmasq(ATKFACE):
-    try:
-        os.system("sudo ifconfig {ATKFACE} up")
-        os.system("sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.backup")
-
-        dnsmasq_file = """# disables dnsmasq reading any other files like /etc/resolv.conf for nameservers
-no-resolv
-# Interface to bind to
-interface={}
-#Specify starting_range,end_range,lease_time 
-dhcp-range=172.20.20.3,172.20.20.20,12h
-# dns addresses to send to the clients
-# server=8.8.8.8
-server=172.20.20.1
-server=223.6.6.6\n""".format(ATKFACE)
-
-        os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
-        open("/etc/dnsmasq.conf").write(dnsmasq_file)
-
-    except Exception as e:
-        print(e)
-
-
-def hostapd(ATKFACE, essid, channel):
-    try:
-        # HOSTAPD CONFIG
-        hostapd_file = """interface={}
-driver=nl80211
-ssid={}
-hw_mode=g
-channel={}
-macaddr_acl=0
-auth_algs=1
-ignore_broadcast_ssid=0
-""".format(ATKFACE, essid, str(channel))
-        os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
-        open("/etc/hostapd/hostapd.conf").write(hostapd_file)
-    except Exception as e:
-        print(e)
+from wifiINFO import config
+import traceback
 
 
 def iptables_setting(ATKFACE):
@@ -57,10 +18,37 @@ def iptables_setting(ATKFACE):
         os.system("sudo iptables --append FORWARD --in-interface {} -j ACCEPT".format(ATKFACE))
         # /IPTABLES
     except Exception as e:
-        print(e)
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
 
 
-def start_dnsmasq():
+def dnsmasq(ATKFACE):
+    try:
+        os.system("sudo ifconfig {} up".format(ATKFACE))
+        os.system("sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.backup")
+
+        dnsmasq_file = """# disables dnsmasq reading any other files like /etc/resolv.conf for nameservers
+    no-resolv
+    # Interface to bind to
+    interface={}
+    #Specify starting_range,end_range,lease_time 
+    dhcp-range=172.20.20.3,172.20.20.20,12h
+    # dns addresses to send to the clients
+    # server=8.8.8.8
+    server=172.20.20.1
+    server=223.6.6.6\n""".format(ATKFACE)
+
+        os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
+        open("/etc/dnsmasq.conf", 'w+').write(dnsmasq_file)
+
+    except Exception as e:
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
+
     try:
         os.system("sudo /etc/init.d/dnsmasq stop > /dev/null 2>&1")
         os.system("sudo pkill dnsmasq")
@@ -71,11 +59,34 @@ def start_dnsmasq():
         return dnsmasq_pid
 
     except Exception as e:
-        print(e)
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
 
 
-def start_hostapd():
+def hostapd(ATKFACE, essid, channel):
     try:
+        # HOSTAPD CONFIG
+        hostapd_file = """interface={}
+    driver=nl80211
+    ssid={}
+    hw_mode=g
+    channel={}
+    macaddr_acl=0
+    auth_algs=1
+    ignore_broadcast_ssid=0
+    """.format(ATKFACE, essid, str(channel))
+        os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
+        open("/etc/hostapd/hostapd.conf", 'w+').write(hostapd_file)
+    except Exception as e:
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
+
+    try:
+        os.system("pkill -9 hostapd")
         os.system("sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null 2>&1")
         process = subprocess.Popen([
             'sudo',
@@ -86,15 +97,18 @@ def start_hostapd():
         return process
 
     except Exception as e:
-        print(e)
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
         pass
 
 
-def start_apd(ATKFACE, essid, channel):
-    dnsmasq(ATKFACE)
-    hostapd(ATKFACE, essid, channel)
-    iptables_setting(ATKFACE)
+def host(essid, channel):
+    ATKFACE = config.get_value('ATKFACE')
 
-    dnsmasq_pid = start_dnsmasq()
-    host_pid = start_hostapd()
+    iptables_setting(ATKFACE)
+    dnsmasq_pid = dnsmasq(ATKFACE)
+    host_pid = hostapd(ATKFACE, essid, channel)
+
     return dnsmasq_pid, host_pid

@@ -239,7 +239,7 @@ def start_airmon():
         MONFACE, ATKFACE = interfaces
 
         subprocess.Popen([
-            'airmon',
+            'airmon-ng',
             'start',
             MONFACE,
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

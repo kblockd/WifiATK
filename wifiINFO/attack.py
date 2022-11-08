@@ -1,40 +1,31 @@
 from wifiINFO.models import *
 from wifiINFO.utils import *
 from wifiINFO import config
-from wifiINFO.hostapd import start_apd
+from wifiINFO.hostapd import host
 from wifiINFO.wifi import get_wifi, get_station
 
 import datetime, time
 import random
-import subprocess
 import traceback
 
 
-def hostapd_bssid(bssid):
-    ATKFACE = config.get_value('ATKFACE')
-    target = Nativelog.objects.filter(bssid=bssid)
+def host_wifi(host_id):
+    try:
+        target = Nativelog.objects.filter(id=host_id)
+    except Exception as e:
+        print(e)
+        return False
+
     if target.count() < 1:
         return False
+
     essid, channel = target.values_list('essid','channel').first()
     if essid is None:
         return False
 
-    start_apd(ATKFACE, essid, channel)
+    dnsmasq_pid, host_pid = host(essid, channel)
 
-
-def atk_client(client):
-    ATKFACE = config.get_value('ATKFACE')
-    station = Stationlog.objects.filter(client=client).values('essid','channel')
-    if station.count() == 1:
-        station =station.get()
-        if station['essid'] is None or station['channel'] < 0:
-            return False
-        essid = station['essid']
-        channel = station['channel']
-    else:
-        return False
-
-    start_apd(ATKFACE, essid, channel)
+    return dnsmasq_pid, host_pid
 
 
 def attack_native_wifi(bssid, channel):

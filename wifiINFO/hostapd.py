@@ -64,7 +64,12 @@ def start_dnsmasq():
     try:
         os.system("sudo /etc/init.d/dnsmasq stop > /dev/null 2>&1")
         os.system("sudo pkill dnsmasq")
-        os.system("sudo dnsmasq")
+        dnsmasq_pid = subprocess.Popen([
+            'sudo',
+            'dnsmasq',
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return dnsmasq_pid
+
     except Exception as e:
         print(e)
 
@@ -89,6 +94,7 @@ def start_apd(ATKFACE, essid, channel):
     dnsmasq(ATKFACE)
     hostapd(ATKFACE, essid, channel)
     iptables_setting(ATKFACE)
-    start_dnsmasq()
-    process = start_hostapd()
-    return process
+
+    dnsmasq_pid = start_dnsmasq()
+    host_pid = start_hostapd()
+    return dnsmasq_pid, host_pid

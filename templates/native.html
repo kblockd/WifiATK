@@ -306,7 +306,7 @@
                         </div>
                         <div class="card-content">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example" >
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
                                             <th>id</th>
@@ -317,7 +317,7 @@
                                             <th>privacy</th>
                                             <th>cipher</th>
                                             <th>authentication</th>
-                                            <th>attack</th>>
+                                            <th>attack</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -343,7 +343,13 @@
                                                 <td>{{ native.privacy }}</td>
                                                 <td>{{ native.cipher }}</td>
                                                 <td>{{ native.authentication }}</td>
-                                                <td><a href="host/{{ native.id }}" />Host it</td>
+                                                <td>
+                                                    {% if native.essid != None %}
+                                                        <a href="host/{{ native.id }}"/>Host it
+                                                    {% else %}
+                                                        No Essid
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

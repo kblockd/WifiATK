@@ -1,13 +1,11 @@
 # -*- coding: utf-8
-import random, signal
+import signal
 import datetime, time
 import subprocess
 import traceback
-from wifiINFO.hostapd import start_apd
 from wifiINFO import config
 from wifiINFO.utils import *
 from wifiINFO.models import *
-
 
 
 def get_interfaces():
@@ -66,7 +64,6 @@ def get_wifi(wifi_lines):
             print('\n','>>>' * 20)
             print(traceback.format_exc())
 
-
     return (Wifis)
 
 
@@ -94,7 +91,6 @@ def get_station(station_lines):
             print(traceback.print_exc())
             print('\n','>>>' * 20)
             print(traceback.format_exc())
-
 
     return (Stations)
 
@@ -152,12 +148,10 @@ def data_wifi(wifi_lines):
         update_list, ['essid', 'channel', 'privacy', 'cipher', 'authentication']
         )
     except Exception as e:
-        print(e)
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
         print(traceback.format_exc())
-
 
 
 def data_station(station_lines):
@@ -224,12 +218,12 @@ def data_station(station_lines):
         print(traceback.format_exc())
 
 
-
 #启动
 def start_airmon():
     LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
     LOG = "{}/{}-01.csv".format(LOGDIR,LOGNAME)
+    config.set_value('LOG', LOG)
 
     try:
         subprocess.Popen([
@@ -245,10 +239,9 @@ def start_airmon():
         MONFACE, ATKFACE = interfaces
 
         subprocess.Popen([
-            'iwconfig',
+            'airmon',
+            'start',
             MONFACE,
-            'mode',
-            'monitor'
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as e:
         
@@ -297,85 +290,11 @@ def start_airmon():
         return False
 
 
-def random_target():
-    LOGDIR = config.get_value('LOGDIR')
-    LOGNAME = config.get_value('LOGNAME')
-    LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
-
-    wifi_lines, station_lines = file_parse(LOG)
-    new_wifi_list = get_wifi(wifi_lines)
-    new_station_list = get_station(station_lines)
-
-    channel_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 34, 36, 38,
-                    40, 42, 44, 46, 48,52, 56, 60, 64, 100, 104, 108, 112, 116, 120,
-                    124, 128, 132, 136, 140, 149,153, 157, 161, 165, 183, 184, 185, 187, 188, 189, 192, 196]
-
-    for count in range(0,10):
-        random_wifi = random.choice(new_wifi_list)
-        if random_wifi['essid'] is not None and random_wifi['privacy'] in ('OPN', None) \
-                and int(random_wifi['channel']) not in channel_list:
-            continue
-        elif not Wifilog.objects.filter(bssid=random_wifi['bssid']).exists():
-            continue
-
-        for station in new_station_list:
-            if station['bssid'] == random_wifi['bssid'] and station['essid'] is None:
-                return random_wifi
-
-    return None
-
-
-def cron_atk():
-    if not config.get_value('MAIN_STATUS'):
-        return
-
-    if not config.get_value('ATK_STATUS'):
-        return
-
-    ATKFACE = config.get_value('ATKFACE')
-
-    time1 = time.time()
-
-    try:
-        random_wifi = random_target()
-
-        if random_wifi:
-            bssid, channel = random_wifi['bssid'], random_wifi['channel']
-            process = deauth(ATKFACE, bssid, channel)
-            time.sleep(20)
-            try:
-                process.kill()
-            except Exception as e:
-                
-                print('\n','>>>' * 20)
-                print(traceback.print_exc())
-                print('\n','>>>' * 20)
-                print(traceback.format_exc())
-
-            time2 = time.time()
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-            print(("{}:Attack").format(random_wifi['bssid']))
-            print('CronATK消耗:{}'.format(time2 - time1))
-        else:
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-            print("超时跳过")
-    except Exception as e:
-        
-        print('\n','>>>' * 20)
-        print(traceback.print_exc())
-        print('\n','>>>' * 20)
-        print(traceback.format_exc())
-
-        return False
-
-
 def cron_data():
     if not config.get_value('MAIN_STATUS'):
         return
 
-    LOGDIR = config.get_value('LOGDIR')
-    LOGNAME = config.get_value('LOGNAME')
-    LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
+    LOG = config.get_value('LOG')
     time1 = time.time()
     try:
         wifi_lines, station_lines = file_parse(LOG)
@@ -396,10 +315,7 @@ def cron_data():
 
 
 def cron_nativelog():
-    LOGDIR = config.get_value('LOGDIR')
-    LOGNAME = config.get_value('LOGNAME')
-    LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
-
+    LOG = config.get_value('LOG')
 
     wifi_lines, station_lines = file_parse(LOG)
     new_wifi_list = get_wifi(wifi_lines)
@@ -452,46 +368,3 @@ def cron_nativelog():
         print(traceback.format_exc())
 
         pass
-
-
-def attack_native_wifi(bssid, channel):
-    ATKFACE =config.get_value('ATKFACE')
-    try:
-        deauth(ATKFACE, bssid, channel)
-    except Exception as e:
-        
-        print('\n','>>>' * 20)
-        print(traceback.print_exc())
-        print('\n','>>>' * 20)
-        print(traceback.format_exc())
-
-
-
-def hostapd_client(client):
-    ATKFACE = config.get_value('ATKFACE')
-    LOGDIR = config.get_value('LOGDIR')
-    LOGNAME = config.get_value('LOGNAME')
-    LOG = "{}/{}-01.csv".format(LOGDIR, LOGNAME)
-
-    # fro
-    #
-    # try:
-    #     deauth(ATKFACE, bssid, channel)
-    # #     start_apd(ATKFACE, essid, channel)
-    #
-    #
-    # except Exception as e:
-    #     
-def atk_client(client):
-    ATKFACE = config.get_value('ATKFACE')
-    station = Stationlog.objects.filter(client=client).values('essid','channel')
-    if station.count() == 1:
-        station =station.get()
-        if station['essid'] is None or station['channel'] < 0:
-            return False
-        essid = station['essid']
-        channel = station['channel']
-    else:
-        return False
-
-    start_apd(ATKFACE, essid, channel)

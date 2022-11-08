@@ -146,5 +146,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRONJOBS = [
     ('*/1 * * * *', 'wifiINFO.wifi.cron_data', ' >> /tmp/crondata.log'),
-    ('*/3 * * * *', 'wifiINFO.wifi.cron_atk', ' >> /tmp/cronatk.log')
+    ('*/3 * * * *', 'wifiINFO.wifi.cron_atk', ' >> /tmp/cronatk.log'),
+    ('*/1 * * * *', 'wifiINFO.wifi.cron_nativelog', '>> /tmp/crondata.log')
 ]

@@ -41,7 +41,7 @@ class Activelog(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'nativeLog'
+        db_table = 'activeLog'
 
 
 class Stationlog(models.Model):

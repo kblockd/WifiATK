@@ -8,6 +8,10 @@ import atexit
 def exit_status():
     if 'runserver' in sys.argv:
         import wifiINFO
+        # if wifiINFO.config.get_value('') is not None:
+        #     global host
+        #     global dnsmasq
+        #     wifiINFO.config.set_value('HOST_PID',None)
         # wifiINFO.models.Conf.objects.filter(id=1).update(MAIN_STATUS=0)
 
 

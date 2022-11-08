@@ -37,12 +37,14 @@ class Empty(View):
     def post(self,request):
         return render(request, 'empty.html')
 
+
 class Form(View):
     def get(self,request):
         return render(request, 'form.html')
 
     def post(self,request):
         return render(request, 'form.html')
+
 
 class Tab_panel(View):
     def get(self,request):
@@ -155,11 +157,8 @@ class Native(View):
 
 def host_atk(request, wifi_id):
     try:
-        dnsmasq, host = host_wifi(wifi_id)
-        pids = {
-            'dnsmasq_pid': dnsmasq.pid,
-            'host_pid': host.pid,
-        }
+        pids = start_host(wifi_id)
+
         return JsonResponse(pids)
     except Exception as e:
         print(e)

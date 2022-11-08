@@ -220,10 +220,8 @@ def data_station(station_lines):
 
 #启动
 def start_airmon():
-    LOGDIR = config.get_value('LOGDIR')
     LOGNAME = config.get_value('LOGNAME')
-    LOG = "{}/{}-01.csv".format(LOGDIR,LOGNAME)
-    config.set_value('LOG', LOG)
+    LOG = config.get_value('LOG')
 
     try:
         subprocess.Popen([
@@ -235,9 +233,7 @@ def start_airmon():
         return False
 
     try:
-        interfaces = get_interfaces()
-        MONFACE, ATKFACE = interfaces
-
+        MONFACE = config.get_value('MONFACE')
         subprocess.Popen([
             'airmon-ng',
             'start',
@@ -253,8 +249,6 @@ def start_airmon():
         return False
 
     try:
-        config.set_value('MONFACE', MONFACE)
-        config.set_value('ATKFACE', ATKFACE)
         process = subprocess.Popen([
             'airodump-ng',
             MONFACE,
@@ -277,7 +271,6 @@ def start_airmon():
 
         if os.path.exists(LOG):
             if os.stat(LOG).st_size > 200:
-               #    测试用
                 config.set_value('MAIN_STATUS',1)
                 return process.pid
         else:

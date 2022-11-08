@@ -15,6 +15,8 @@ class Conf(models.Model):
     LOGDIR = models.CharField(db_column='LOGDIR', max_length=255, blank=True, null=True)  # Field name made lowercase.
     LOGNAME = models.CharField(db_column='LOGNAME', max_length=255, blank=True, null=True)  # Field name made lowercase.
     LOG = models.CharField(db_column='LOG', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    HOST_PID = models.IntegerField(db_column='HOST_PID', blank=True, null=True)  # Field name made lowercase.
+    DNSMASQ_PID = models.IntegerField(db_column='DNSMASQ_PID', blank=True, null=True)  # Field name made lowercase.
     MAIN_STATUS = models.IntegerField(db_column='MAIN_STATUS', blank=True, null=True)  # Field name made lowercase.
     ATK_STATUS = models.IntegerField(db_column='ATK_STATUS', blank=True, null=True)  # Field name made lowercase.
 

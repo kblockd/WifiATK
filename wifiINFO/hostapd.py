@@ -1,6 +1,8 @@
 # coding = utf-8
 import os
 import subprocess
+import time
+
 from wifiINFO import config
 import traceback
 
@@ -30,15 +32,15 @@ def dnsmasq(ATKFACE):
         os.system("sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.backup")
 
         dnsmasq_file = """# disables dnsmasq reading any other files like /etc/resolv.conf for nameservers
-    no-resolv
-    # Interface to bind to
-    interface={}
-    #Specify starting_range,end_range,lease_time 
-    dhcp-range=172.20.20.3,172.20.20.20,12h
-    # dns addresses to send to the clients
-    # server=8.8.8.8
-    server=172.20.20.1
-    server=223.6.6.6\n""".format(ATKFACE)
+no-resolv
+# Interface to bind to
+interface={}
+#Specify starting_range,end_range,lease_time 
+dhcp-range=172.20.20.3,172.20.20.20,12h
+# dns addresses to send to the clients
+# server=8.8.8.8
+server=172.20.20.1
+server=223.6.6.6\n""".format(ATKFACE)
 
         os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
         open("/etc/dnsmasq.conf", 'w+').write(dnsmasq_file)
@@ -69,14 +71,14 @@ def hostapd(ATKFACE, essid, channel):
     try:
         # HOSTAPD CONFIG
         hostapd_file = """interface={}
-    driver=nl80211
-    ssid={}
-    hw_mode=g
-    channel={}
-    macaddr_acl=0
-    auth_algs=1
-    ignore_broadcast_ssid=0
-    """.format(ATKFACE, essid, str(channel))
+driver=nl80211
+ssid={}
+hw_mode=g
+channel={}
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+""".format(ATKFACE, essid, str(channel))
         os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
         open("/etc/hostapd/hostapd.conf", 'w+').write(hostapd_file)
     except Exception as e:
@@ -86,7 +88,9 @@ def hostapd(ATKFACE, essid, channel):
         print(traceback.format_exc())
 
     try:
-        os.system("pkill -9 hostapd")
+        os.system("sudo pkill -9 hostapd")
+        os.kill()
+        time.sleep(5)
         os.system("sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null 2>&1")
         process = subprocess.Popen([
             'sudo',

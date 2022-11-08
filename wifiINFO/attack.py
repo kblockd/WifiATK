@@ -1,7 +1,7 @@
 from wifiINFO.models import *
 from wifiINFO.utils import *
 from wifiINFO import config
-from wifiINFO.hostapd import host
+import wifiINFO.hostapd as hostpid
 from wifiINFO.wifi import get_wifi, get_station
 
 import datetime, time
@@ -9,7 +9,7 @@ import random
 import traceback
 
 
-def host_wifi(host_id):
+def start_host(host_id):
     try:
         target = Nativelog.objects.filter(id=host_id)
     except Exception as e:
@@ -23,9 +23,18 @@ def host_wifi(host_id):
     if essid is None:
         return False
 
-    dnsmasq_pid, host_pid = host(essid, channel)
+    dnsmasq, host = hostpid.host(essid, channel)
 
-    return dnsmasq_pid, host_pid
+    config.set_value('HOST_PID', host.pid)
+    config.set_value('DNSMASQ_PID', dnsmasq.pid)
+
+    pids = {
+        'host_name':essid,
+        'host_pid':host.pid,
+        'dnsmasq_pid':dnsmasq.pid,
+    }
+
+    return pids
 
 
 def attack_native_wifi(bssid, channel):

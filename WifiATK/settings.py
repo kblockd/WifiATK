@@ -150,3 +150,5 @@ CRONJOBS = [
     ('*/3 * * * *', 'wifiINFO.wifi.cron_atk', ' >> /tmp/cronatk.log'),
     ('*/1 * * * *', 'wifiINFO.wifi.cron_nativelog', '>> /tmp/crondata.log')
 ]
+
+APPEND_SLASH=True

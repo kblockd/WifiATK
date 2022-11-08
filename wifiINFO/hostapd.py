@@ -2,35 +2,9 @@
 import os
 import subprocess
 
-sudo = "/usr/bin/sudo"
-tee = "/usr/bin/tee"
-
-
-def _run_cmd_write(cmd_args, s):
-    # write a file using sudo
-    p = subprocess.Popen(cmd_args, stdin=subprocess.PIPE,
-                         stdout=subprocess.PIPE, shell=False, universal_newlines=True)
-    p.stdin.write(s)
-    p.stdin.close()
-    p.wait()
-
-
-def write_file(path, s):
-    _run_cmd_write((sudo, tee, path), s)
-
 
 def dnsmasq(ATKFACE):
     try:
-        network_manager_cfg = """
-[main]
-plugins=keyfile
-[keyfile]
-unmanaged-devices=interface-name:{}
-""".format(ATKFACE)
-
-        os.system("sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.backup")
-        write_file("/etc/NetworkManager/NetworkManager.conf", network_manager_cfg)
-        os.system("sudo service NetworkManager restart")
         os.system("sudo ifconfig {ATKFACE} up")
         os.system("sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.backup")
 
@@ -46,7 +20,7 @@ server=172.20.20.1
 server=223.6.6.6\n""".format(ATKFACE)
 
         os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
-        write_file("/etc/dnsmasq.conf", dnsmasq_file)
+        open("/etc/dnsmasq.conf").write(dnsmasq_file)
 
     except Exception as e:
         print(e)
@@ -65,7 +39,7 @@ auth_algs=1
 ignore_broadcast_ssid=0
 """.format(ATKFACE, essid, str(channel))
         os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
-        write_file("/etc/hostapd/hostapd.conf", hostapd_file)
+        open("/etc/hostapd/hostapd.conf").write(hostapd_file)
     except Exception as e:
         print(e)
 

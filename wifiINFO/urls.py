@@ -11,8 +11,8 @@ urlpatterns = [
     re_path('form(|/)', views.Form.as_view()),
     re_path('index(|/)', views.Index.as_view()),
     re_path('tab-panel(|/)', views.Tab_panel.as_view()),
-    re_path('table(|/)', views.Table.as_view()),
+    path('table/', views.Native.as_view()),
     re_path('ui-elements(|/)', views.Ui_elements.as_view()),
-    path('native', views.Native.as_view()),
+    path('native/', views.Native.as_view()),
     path('host/<int:atkid>/', views.attack, name='host'),
 ]

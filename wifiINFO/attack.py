@@ -7,9 +7,11 @@ from wifiINFO.wifi import get_wifi, get_station
 import datetime, time
 import random
 import traceback
+import signal
 
 
 def start_host(host_id):
+    stop_host()
     try:
         target = Nativelog.objects.filter(id=host_id)
     except Exception as e:
@@ -35,6 +37,25 @@ def start_host(host_id):
     }
 
     return pids
+
+
+def stop_host():
+    try:
+        os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
+        dnsmasq_pid = config.get_value('DNSMASQ_PID')
+        if dnsmasq_pid is not None:
+            os.kill(dnsmasq_pid, signal.SIGKILL)
+
+        os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
+        host_pid = config.get_value('HOST_PID')
+        if host_pid is not None:
+            os.kill(host_pid, signal.SIGKILL)
+        time.sleep(5)
+    except:
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
 
 
 def attack_native_wifi(bssid, channel):

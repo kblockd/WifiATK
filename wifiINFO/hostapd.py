@@ -2,7 +2,7 @@
 import os
 import subprocess
 import time
-
+import signal
 from wifiINFO import config
 import traceback
 
@@ -29,7 +29,7 @@ def iptables_setting(ATKFACE):
 def dnsmasq(ATKFACE):
     try:
         os.system("sudo ifconfig {} up".format(ATKFACE))
-        os.system("sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.backup")
+        # os.system("sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.backup")
 
         dnsmasq_file = """# disables dnsmasq reading any other files like /etc/resolv.conf for nameservers
 no-resolv
@@ -42,7 +42,6 @@ dhcp-range=172.20.20.3,172.20.20.20,12h
 server=172.20.20.1
 server=223.6.6.6\n""".format(ATKFACE)
 
-        os.system("sudo rm /etc/dnsmasq.conf > /dev/null 2>&1")
         open("/etc/dnsmasq.conf", 'w+').write(dnsmasq_file)
 
     except Exception as e:
@@ -52,11 +51,12 @@ server=223.6.6.6\n""".format(ATKFACE)
         print(traceback.format_exc())
 
     try:
-        os.system("sudo /etc/init.d/dnsmasq stop > /dev/null 2>&1")
-        os.system("sudo pkill dnsmasq")
+        # os.system("sudo /etc/init.d/dnsmasq stop > /dev/null 2>&1")
+        # os.system("sudo pkill dnsmasq")
         dnsmasq_pid = subprocess.Popen([
             'sudo',
             'dnsmasq',
+            '-d'
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return dnsmasq_pid
 
@@ -79,8 +79,9 @@ macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
 """.format(ATKFACE, essid, str(channel))
-        os.system("sudo rm /etc/hostapd/hostapd.conf > /dev/null 2>&1")
+
         open("/etc/hostapd/hostapd.conf", 'w+').write(hostapd_file)
+
     except Exception as e:
         print('\n', '>>>' * 20)
         print(traceback.print_exc())
@@ -88,9 +89,6 @@ ignore_broadcast_ssid=0
         print(traceback.format_exc())
 
     try:
-        os.system("sudo pkill -9 hostapd")
-        os.kill()
-        time.sleep(5)
         os.system("sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null 2>&1")
         process = subprocess.Popen([
             'sudo',

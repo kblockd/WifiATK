@@ -22,7 +22,7 @@ def init_conf():
         config.set_value('ATKFACE', ATKFACE)
 
         config.set_value('HOST_PID', None)
-       # config.set_value('DNSMASQ_PID', None)
+        config.set_value('DNSMASQ_PID', None)
 
         config.set_value('MAIN_STATUS', 0)
         config.set_value('ATK_STATUS', 0)

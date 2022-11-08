@@ -11,7 +11,8 @@ def init_data(sender, **kwargs):
     from wifiINFO.models import Conf
     if Conf.objects.count() == 0:
         conf_data = {"id": 1, "MONFACE": None, "ATKFACE": None,
-                    "LOGNAME": None, "LOGDIR": None, "MAIN_STATUS": 0, "ATK_STATUS": 0,
+                    "LOGDIR": None, "LOGNAME": None, "LOG":None,
+                    "HOST_PID":None, "DNSMASQ_PID":None, "MAIN_STATUS": 0, "ATK_STATUS": 0,
         }
         Conf.objects.create(**conf_data)
 

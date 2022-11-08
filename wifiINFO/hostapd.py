@@ -24,9 +24,9 @@ def iptables_setting(ATKFACE):
         print(traceback.format_exc())
 
 
-def dnsmasq(ATKFACE):
+def start_dnsmasq(ATKFACE):
     try:
-        os.system("sudo ifconfig {} up".format(ATKFACE))
+        os.system("sudo ifconfig {} up ".format(ATKFACE))
         # os.system("sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.backup")
 
         dnsmasq_file = """# disables dnsmasq reading any other files like /etc/resolv.conf for nameservers
@@ -119,7 +119,8 @@ def hostapd(ATKFACE, essid, channel):
 def init_hostapd():
     ATKFACE = config.get_value('ATKFACE')
     iptables_setting(ATKFACE)
-    dnsmasq(ATKFACE)
+    DNSMASQ_PID = start_dnsmasq(ATKFACE)
+    config.set_value('DNSMASQ_PID',DNSMASQ_PID)
 
 
 def host(essid, channel):

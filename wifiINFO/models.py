@@ -31,9 +31,10 @@ class Nativelog(models.Model):
     cipher = models.CharField(db_column='Cipher', max_length=30, blank=True, null=True)  # Field name made lowercase.
     authentication = models.CharField(db_column='Authentication', max_length=30, blank=True, null=True)  # Field name made lowercase.
 
+    @classmethod
     def truncate(cls):
         with connection.cursor() as cursor:
-            cursor.execute('TRUNCATE TABLE "{0}" CASCADE'.format(cls._meta.db_table))
+            cursor.execute('TRUNCATE TABLE {0}'.format(cls._meta.db_table))
 
     class Meta:
         managed = True

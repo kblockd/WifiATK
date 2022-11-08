@@ -217,7 +217,7 @@ def data_station(station_lines):
             update_list, ['essid', 'last_time']
         )
     except Exception as e:
-        print(e)
+        
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
@@ -251,7 +251,7 @@ def start_airmon():
             'monitor'
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as e:
-        print(e)
+        
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
@@ -271,7 +271,7 @@ def start_airmon():
             'csv',
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as e:
-        print(e)
+        
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
@@ -346,7 +346,7 @@ def cron_atk():
             try:
                 process.kill()
             except Exception as e:
-                print(e)
+                
                 print('\n','>>>' * 20)
                 print(traceback.print_exc())
                 print('\n','>>>' * 20)
@@ -360,7 +360,7 @@ def cron_atk():
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             print("超时跳过")
     except Exception as e:
-        print(e)
+        
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
@@ -386,7 +386,7 @@ def cron_data():
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         print('CronLOG消耗:{}'.format(time2 - time1))
     except Exception as e:
-        print(e)
+        
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
@@ -413,12 +413,17 @@ def cron_nativelog():
         privacy = wifi['privacy']
         cipher = wifi['cipher']
         authentication = wifi['authentication']
-        essid = wifi['essid'] if not wifi['essid'] else ''
+        essid = wifi['essid'] if wifi['essid'] is not None else ''
         client = []
         for station in new_station_list:
             if station['bssid'] == bssid:
+
+                if essid == '':
+                    if station['essid'] is not None:
+                        essid += station['essid']
+
                 client.append(station['client'])
-                essid = essid + ',' + station['essid'] if not station['essid'] else essid
+
         client = ','.join(client)
 
         create_list.append(
@@ -437,7 +442,7 @@ def cron_nativelog():
         Nativelog.truncate()
         Nativelog.objects.bulk_create(create_list)
     except Exception as e:
-        print(e)
+        
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
@@ -451,7 +456,7 @@ def attack_native_wifi(bssid, channel):
     try:
         deauth(ATKFACE, bssid, channel)
     except Exception as e:
-        print(e)
+        
         print('\n','>>>' * 20)
         print(traceback.print_exc())
         print('\n','>>>' * 20)
@@ -473,7 +478,7 @@ def hostapd_client(client):
     #
     #
     # except Exception as e:
-    #     print(e)
+    #     
 def atk_client(client):
     ATKFACE = config.get_value('ATKFACE')
     station = Stationlog.objects.filter(client=client).values('essid','channel')

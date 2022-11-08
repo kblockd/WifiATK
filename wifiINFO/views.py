@@ -94,29 +94,6 @@ class Ui_elements(View):
         return render(request, 'ui-elements.html')
 
 
-class Mywifi(View):
-    def get(self,request):
-       # Wifilog.objects.filter().
-        return render(request,'wifi.html')
-
-    def post(self,request):
-        return render(request,'wifi.html')
-
-
-class Mystation(View):
-    def get(self,request):
-        return render(request,'station.html')
-
-    def post(self,request):
-        return render(request,'station.html')
-
-
-def runoob(request):
-    context = {}
-    context['hello'] = 'Hello World!'
-    return render(request, 'runoob.html', context)
-
-
 def attack(request, atkid):
     try:
         wifi = Wifilog.objects.filter(id=atkid).values().get()
@@ -154,6 +131,52 @@ class Native(View):
             print(traceback.format_exc())
         return render(request, 'native.html', {'native_data': native_data})
 
+
+class Wifi(View):
+    def get(self,request):
+        try:
+            wifi_data = Wifilog.objects.all().order_by('bssid').values()
+        except:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+        return render(request, 'wifilog.html',{'wifi_data':wifi_data})
+
+    def post(self,request):
+        try:
+            wifi_data = Wifilog.objects.all().order_by('bssid').values()
+        except:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+        return render(request, 'wifilog.html',{'wifi_data':wifi_data})
+
+
+
+class Station(View):
+    def get(self, request):
+        try:
+            station_data = Stationlog.objects.all().order_by('client').values()
+        except:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+            return False
+        return render(request, 'stationlog.html', {'station_data': station_data})
+
+    def post(self, request):
+        try:
+            station_data = Stationlog.objects.all().order_by('client').values()
+        except:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+            return False
+        return render(request, 'stationlog.html', {'station_data': station_data})
 
 def host_atk(request, wifi_id):
     try:

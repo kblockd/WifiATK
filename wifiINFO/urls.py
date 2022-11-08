@@ -12,7 +12,11 @@ urlpatterns = [
     path('form/', views.Form.as_view()),
     path('index/', views.Index.as_view()),
     path('tab-panel/', views.Tab_panel.as_view()),
-    path('table/', views.Native.as_view()),
+
+    path('native/', views.Native.as_view()),
+    path('wifilog/',views.Wifi.as_view()),
+    path('stationlog/',views.Station.as_view()),
+
     path('ui-elements/', views.Ui_elements.as_view()),
     path('native/', views.Native.as_view()),
     path('host/<int:wifi_id>/', views.host_atk, name='host'),

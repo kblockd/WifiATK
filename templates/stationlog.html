@@ -271,47 +271,35 @@
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
-                                            <th>id</th>
-                                            <th>bssid</th>
-                                            <th>essid</th>
-                                            <th>client</th>
-                                            <th>channel</th>
-                                            <th>privacy</th>
-                                            <th>cipher</th>
-                                            <th>authentication</th>
-                                            <th>attack</th>
+                                            <th>Id</th>
+                                            <th>Client</th>
+                                            <th>Bssid</th>
+                                            <th>Essid</th>
+                                            <th>First_time</th>
+                                            <th>Last_time</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for native in native_data %}
+                                        {% for station in station_data %}
                                             <tr>
-                                                <td>{{ forloop.counter }}</td>
-                                                <td>{{ native.bssid }}</td>
+                                                <td>{{ station.id }}</td>
+                                                <td>{{ station.client }}
                                                 <td>
-                                                    {% if native.essid == None %}
+                                                    {% if station.bssid == None %}
 
                                                     {% else %}
-                                                        {{ native.essid }}
+                                                        {{ station.bssid }}
                                                     {% endif %}
                                                 </td>
                                                 <td>
-                                                    {% with native.client|split:"," as clients %}
-                                                        {% for client in clients %}
-                                                        <p>{{ client }}</p>
+                                                    {% with station.essid|split:"," as essids %}
+                                                        {% for essid in essids %}
+                                                        <p>{{ essid }}</p>
                                                         {% endfor %}
                                                     {% endwith %}
                                                 </td>
-                                                <td>{{ native.channel }}</td>
-                                                <td>{{ native.privacy }}</td>
-                                                <td>{{ native.cipher }}</td>
-                                                <td>{{ native.authentication }}</td>
-                                                <td>
-                                                    {% if native.essid != None %}
-                                                        <a href="../host/{{ native.id }}"/>Host it
-                                                    {% else %}
-                                                        No Essid
-                                                    {% endif %}
-                                                </td>
+                                                <td>{{ station.first_time }}</td>
+                                                <td>{{ station.last_time }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

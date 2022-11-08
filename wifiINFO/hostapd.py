@@ -1,8 +1,6 @@
 # coding = utf-8
 import os
 import subprocess
-import time
-import signal
 from wifiINFO import config
 import traceback
 

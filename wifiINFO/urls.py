@@ -15,7 +15,7 @@ urlpatterns = [
 
     re_path(r'^$', RedirectView.as_view(url='index/')),
     path('index/', views.Index.as_view()),
-    path('active/', views.Native.as_view()),
+    path('active/', views.Active.as_view()),
     path('wifilog/',views.Wifi.as_view()),
     path('stationlog/',views.Station.as_view()),
 

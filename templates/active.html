@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
+    <title>Active log</title>
 
 
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -229,7 +229,7 @@
                         <a class="active-menu waves-effect waves-dark" href=../index><i class="fa fa-dashboard"></i> Dashboard</a>
                     </li>
                     <li>
-                        <a href=../native class="waves-effect waves-dark"><i class="fa fa-table"></i> Native log</a>
+                        <a href=../active class="waves-effect waves-dark"><i class="fa fa-table"></i> Native log</a>
                     </li>
                     <li>
                         <a href=../wifilog class="waves-effect waves-dark"><i class="fa fa-table"></i> Wifi log</a>
@@ -283,31 +283,31 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for native in native_data %}
+                                        {% for active in active_data %}
                                             <tr>
                                                 <td>{{ forloop.counter }}</td>
-                                                <td>{{ native.bssid }}</td>
+                                                <td>{{ active.bssid }}</td>
                                                 <td>
-                                                    {% if native.essid == None %}
+                                                    {% if active.essid == None %}
 
                                                     {% else %}
-                                                        {{ native.essid }}
+                                                        {{ active.essid }}
                                                     {% endif %}
                                                 </td>
                                                 <td>
-                                                    {% with native.client|split:"," as clients %}
+                                                    {% with active.client|split:"," as clients %}
                                                         {% for client in clients %}
                                                         <p>{{ client }}</p>
                                                         {% endfor %}
                                                     {% endwith %}
                                                 </td>
-                                                <td>{{ native.channel }}</td>
-                                                <td>{{ native.privacy }}</td>
-                                                <td>{{ native.cipher }}</td>
-                                                <td>{{ native.authentication }}</td>
+                                                <td>{{ active.channel }}</td>
+                                                <td>{{ active.privacy }}</td>
+                                                <td>{{ active.cipher }}</td>
+                                                <td>{{ active.authentication }}</td>
                                                 <td>
-                                                    {% if native.essid != None %}
-                                                        <a href="../host/{{ native.id }}"/>Host it
+                                                    {% if active.essid != None %}
+                                                        <a href="../host/start/{{ active.id }}"/>Host it
                                                     {% else %}
                                                         No Essid
                                                     {% endif %}

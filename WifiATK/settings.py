@@ -79,25 +79,25 @@ WSGI_APPLICATION = 'WifiATK.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        "NAME": "wifi",
-        "USER": "root",
-        "PASSWORD": "test123",
-        "HOST": "192.168.31.139",
+        "NAME": "Wifi",
+        "USER": "wifi",
+        "PASSWORD": "WifiAttack123.",
+        "HOST": "127.0.0.1",
         "POST": 3306,
         'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://192.168.31.139:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": "test123.."
-        }
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://192.168.31.139:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             "PASSWORD": "test123.."
+#         }
+#     }
+# }
 
 
 # Password validation

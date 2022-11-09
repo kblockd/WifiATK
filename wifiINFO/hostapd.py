@@ -55,7 +55,7 @@ server=223.6.6.6\n""".format(ATKFACE)
             'sudo',
             'dnsmasq',
             '-d'
-        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).pid
         return dnsmasq_pid
 
     except Exception as e:

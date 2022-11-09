@@ -266,7 +266,7 @@ def start_airmon():
 
         return False
 
-    for count in range(0,5):  # 启动
+    for count in range(0, 3):  # 启动
         time.sleep(10)  # 启动等待
 
         if os.path.exists(LOG):

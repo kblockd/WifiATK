@@ -11,7 +11,7 @@ from threading import Thread
 def run_cmd(command_list):
     command = ' '.join(command_list)
     ret = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8",
-                         timeout=1)
+                         timeout=10)
     if ret.returncode == 0:
         return ret.stdout
     else:

@@ -309,6 +309,8 @@ def cron_data():
 
 
 def cron_activelog():
+    if not config.get_value('MAIN_STATUS'):
+        return
     LOG = config.get_value('LOG')
 
     wifi_lines, station_lines = file_parse(LOG)

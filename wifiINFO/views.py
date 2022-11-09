@@ -148,13 +148,18 @@ class Index(View):
                 "wifi_logs": wifi_logs,
                 "station_logs": station_logs,
             }
+            if Conf.objects.filter(id=1).values('ATKFACE').get() is None:
+                atk = 0
+            else:
+                atk = 1
+
         except Exception as e:
             print('\n', '>>>' * 20)
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
             return False
-        return render(request, 'index.html', {"data_list": data_list})
+        return render(request, 'index.html', {"data_list": data_list,'atk':atk})
 
 
 class Active(View):

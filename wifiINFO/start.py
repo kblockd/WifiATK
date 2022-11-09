@@ -17,9 +17,13 @@ def init_conf():
         config.set_value('LOG', LOG)
 
         interfaces = get_interfaces()
-        MONFACE, ATKFACE = interfaces
-        config.set_value('MONFACE', MONFACE)
-        config.set_value('ATKFACE', ATKFACE)
+        if len(interfaces) == 1:
+            MONFACE =  interfaces[0]
+            config.set_value('MONFACE', MONFACE)
+        elif len(interfaces) == 2:
+            MONFACE, ATKFACE  = interfaces
+            config.set_value('MONFACE', MONFACE)
+            config.set_value('ATKFACE', ATKFACE)
 
         config.set_value('HOST_PID', None)
         config.set_value('DNSMASQ_PID', None)

@@ -247,12 +247,12 @@
         <div id="page-wrapper" >
 		  <div class="header"> 
                         <h1 class="page-header">
-                            Tables Page
+                            Active logs
                         </h1>
 						<ol class="breadcrumb">
 					  <li><a href="#">Home</a></li>
-					  <li><a href="#">Tables</a></li>
-					  <li class="active">Data</li>
+					  <li><a href="#">Active</a></li>
+					  <li class="active">logs</li>
 					</ol> 
 									
 		</div>
@@ -308,6 +308,8 @@
                                                 <td>
                                                     {% if active.essid != None %}
                                                         <a href="../host/start/{{ active.id }}"/>Host it
+                                                    {% elif atk == 0 %}
+                                                        No ATKFACE
                                                     {% else %}
                                                         No Essid
                                                     {% endif %}

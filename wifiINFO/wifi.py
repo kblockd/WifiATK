@@ -273,6 +273,8 @@ def start_airmon():
             if os.stat(LOG).st_size > 200:
                 config.set_value('MAIN_STATUS',1)
                 return process.pid
+            else:
+                return False
         else:
             os.kill(process.pid, signal.SIGKILL)
             return False

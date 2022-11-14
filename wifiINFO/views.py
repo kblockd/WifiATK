@@ -1,47 +1,29 @@
 # -*- coding: utf-8
+import os
+import signal
 import traceback
+import json
+import datetime
 
 from django.views import View
 from django.db.models import F
+from django.core import serializers
 from django.shortcuts import render
 from django.http import JsonResponse
 
 from wifiINFO.common import config as configer
-from wifiINFO.models import Wifilog, Stationlog, Activelog
+from wifiINFO.common import attacker
+from wifiINFO.models import Wifilog, Stationlog, Activelog, Conf
 
 config = configer.ConfigManager()
 
 
-class Chart(View):
-    def get(self,request):
-        return render(request, 'chart.html')
-
-    def post(self,request):
-        return render(request, 'chart.html')
-
-
-class Empty(View):
-    def get(self,request):
-        return render(request, 'empty.html')
-
-    def post(self,request):
-        return render(request, 'empty.html')
-
-
-class Form(View):
-    def get(self,request):
-        return render(request, 'form.html')
-
-    def post(self,request):
-        return render(request, 'form.html')
-
-
-class Tab_panel(View):
-    def get(self,request):
-        return render(request, 'tab-panel.html')
-
-    def post(self,request):
-        return render(request, 'tab-panel.html')
+class DateEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            return json.JSONEncoder.default(self, obj)
 
 
 class Table(View):
@@ -75,13 +57,6 @@ class Table(View):
     def post(self, request, *args, **kwargs):
 
         return render(request, 'table2.html')
-
-class Ui_elements(View):
-    def get(self,request):
-        return render(request, 'ui-elements.html')
-
-    def post(self,request):
-        return render(request, 'ui-elements.html')
 
 
 def attack(request, atkid):
@@ -157,6 +132,142 @@ class Index(View):
         return render(request, 'index.html', {"data_list": data_list,'atk':atk})
 
 
+class Index_api(View):
+    def get(self,request):
+        try:
+            active_wifis = Activelog.objects.count()
+            active_clients = []
+            for active in Activelog.objects.all().values('client'):
+                client = active["client"]
+                if client is not None:
+                    active_clients.append(client.split(','))
+            active_clients = len(active_clients)
+            wifi_logs = Wifilog.objects.count()
+            station_logs = Stationlog.objects.count()
+
+            data = dict()
+            data_list = {
+                "active_wifis": active_wifis,
+                "active_clients": active_clients,
+                "wifi_logs": wifi_logs,
+                "station_logs": station_logs,
+            }
+            data["data"] = data_list
+
+            return JsonResponse(data, safe=False)
+
+        except Exception as e:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+            return False
+
+
+    def post(self,request):
+        try:
+            active_wifis = Activelog.objects.count()
+            active_clients = []
+            for active in Activelog.objects.all().values('client'):
+                client = active["client"]
+                if client is not None:
+                    active_clients = active_clients.append(client.split(','))
+            active_clients = active_clients.count()
+            wifi_logs = Wifilog.objects.count()
+            station_logs = Stationlog.objects.count()
+
+            data = dict()
+            data_list = {
+                "active_wifis": active_wifis,
+                "active_clients": active_clients,
+                "wifi_logs": wifi_logs,
+                "station_logs": station_logs,
+            }
+            if config.get('ATKFACE') is None:
+                atk = 0
+            else:
+                atk = 1
+
+            data["data"] = data_list
+            data['atk'] = atk
+
+            return JsonResponse(data, safe=False)
+
+        except Exception as e:
+            print('\n', '>>>' * 20)
+            print(traceback.print_exc())
+            print('\n', '>>>' * 20)
+            print(traceback.format_exc())
+            return False
+
+
+
+class Active_api(View):
+    def get(self, request):
+        try:
+            model = Activelog.objects.all().order_by(
+                F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
+
+            data = dict()
+            data["data"] = list(model)
+            return JsonResponse(data, safe=False)
+        except:
+            return False
+
+    def post(self, request):
+        try:
+            model = Activelog.objects.all().order_by(
+                F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
+
+            data = dict()
+            data["data"] = list(model)
+            return JsonResponse(data, safe=False)
+        except:
+            return False
+
+
+class Wifi_api(View):
+    def get(self, request):
+        try:
+            model = Wifilog.objects.all().order_by('bssid').values()
+
+            data = dict()
+            data["data"] = list(model)
+            return JsonResponse(data, safe=False)
+        except:
+            return False
+
+    def post(self, request):
+        try:
+            model = Wifilog.objects.all().order_by('bssid').values()
+            data = dict()
+            data["data"] = list(model)
+            return JsonResponse(data, safe=False)
+        except:
+            return False
+
+
+class Station_api(View):
+    def get(self, request):
+        try:
+            model = Stationlog.objects.all().order_by('client').values()
+
+            data = dict()
+            data["data"] = list(model)
+            return JsonResponse(data, safe=False)
+        except:
+            return False
+
+    def post(self, request):
+        try:
+            model = Stationlog.objects.all().order_by('client').values()
+            data = dict()
+            data["data"] = list(model)
+            return JsonResponse(data, safe=False)
+        except:
+            return False
+
+
 class Active(View):
     def get(self,request):
         try:
@@ -168,7 +279,8 @@ class Active(View):
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
             return False
-        return render(request, 'active.html',{'active_data':active_data})
+
+        return render(request, 'active.html', {'active_data': active_data})
 
     def post(self,request):
         try:
@@ -207,7 +319,6 @@ class Wifi(View):
         return render(request, 'wifilog.html',{'wifi_data':wifi_data})
 
 
-
 class Station(View):
     def get(self, request):
         try:
@@ -231,29 +342,53 @@ class Station(View):
             return False
         return render(request, 'stationlog.html', {'station_data': station_data})
 
-# def host_atk(request, wifi_id):
-#     try:
-#         pids = start_host(wifi_id)
-#
-#         return JsonResponse(pids)
-#     except Exception as e:
-#         print(e)
-
 
 def attack(request, wifi_id):
-    try:
-        from wifiINFO.common import attacker
-        target = Activelog.objects.get(id=wifi_id)
-        process = attacker.AttackManager().deauth(target.bssid, target.channel)
-    except:
-        print('\n', '>>>' * 20)
-        print(traceback.print_exc())
-        print('\n', '>>>' * 20)
-        print(traceback.format_exc())
-        return False
+    if 'start' in request.path_info:
+        try:
+            target = Activelog.objects.get(id=wifi_id)
+            pid = attacker.AttackManager().deauth(target.bssid, target.channel).pid
 
-    return JsonResponse({'pid': process.pid})
+            data = dict()
+            data["data"] = {"success": 1, "pid": pid}
 
+            return JsonResponse(data, safe=False)
 
-class Config(View):
-    pass
+        except:
+            data = dict()
+            data["data"] = {"success":0}
+            return JsonResponse(data,safe=False)
+
+    if 'stop' in request.path_info:
+        try:
+            pid = config.get('ATK_PID')
+            os.kill(pid,signal.SIGKILL)
+
+            data = dict()
+            data["data"] = {"success": 1}
+            return JsonResponse(data, safe=False)
+        except:
+            data = dict()
+            data["data"] = {"success": 0}
+            return JsonResponse(data, safe=False)
+
+class Config_api(View):
+
+    def get(self, request):
+        model = Conf.objects.all().values()
+
+        data = dict()
+        data["data"] = list(model)
+        return JsonResponse(data, safe=False)
+
+    @staticmethod
+    def set(self, request, key, value):
+        try:
+            config.set()
+            data = dict()
+            data["data"] = {"success": 1}
+            return JsonResponse(data, safe=False)
+        except:
+            data = dict()
+            data["data"] = {"success": 0}
+            return JsonResponse(data, safe=False)

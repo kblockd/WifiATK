@@ -32,6 +32,7 @@ class ConfigManager(object):
         self._HOSTFACE = None
         self._interfaces = self.get_interfaces()
 
+        self._ATK_PID = None
         self._HOST_PID = None
         self._DNSMASQ_PID = None
 
@@ -69,6 +70,7 @@ class ConfigManager(object):
                 MONFACE=MONFACE_NAME,
                 ATKFACE=ATKFACE_NAME,
                 HOSTFACE=HOSTFACE_NAME,
+                ATK_PID=self._ATK_PID,
                 HOST_PID=self._HOST_PID,
                 DNSMASQ_PID=self._DNSMASQ_PID,
                 MAIN_STATUS=self._MAIN_STATUS,

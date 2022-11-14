@@ -40,10 +40,12 @@ class AttackManager(Dataparser):
                 bssid
             ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-            return process
-
+            self.config.set(ATK_PID=process.pid)
         except Exception as e:
             print(e)
+            return False
+
+        return process
 
     def cron_atk(self):
         if not self.config.get('MAIN_STATUS'):

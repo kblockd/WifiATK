@@ -19,7 +19,8 @@
     <link rel="stylesheet"href={% static "js/morris/morris-0.4.3.min.css" %}  />
     <!-- Custom Styles-->
     <link rel="stylesheet" href={% static "css/custom-styles.css" %}  />
-    <link rel="stylesheet" type="text/css" href={% static "css/active.css" %}    />
+{#    <link rel="stylesheet" type="text/css" href={% static "css/active.css" %}    />#}
+
 
     <!-- Google Fonts-->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
@@ -269,8 +270,8 @@
                              Advanced Tables
                         </div>
                         <div class="card-content">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                            <div class="table-responsive" style="text-align: center;">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example" >
                                     <thead>
                                         <tr>
                                             <th>id</th>
@@ -309,15 +310,9 @@
                                                 <td>{{ active.authentication }}</td>
                                                 <td>
                                                     {% if active.client != None %}
-                                                        <div class="switch">
-                                                            <label>
-{#                                                                <input type="checkbox" name="checkboxswitch" value="{{ active.id }}" class="onoff sw3" checked><span>switch large</span>#}
-
-                                                                <input type="checkbox" name="checkboxswitch" class="onoff sw2" checked>
-
-{#                                                                <input type="checkbox" value="{{ active.id }}" name="attack" class="onoff">#}
-                                                            </label>
-                                                        </div>
+                                                        <label>
+                                                                <input id={{ active.id }} class="switch-component" onclick="attack_target()" value="Attack" type="button">
+                                                        </label>
 {#                                                        <a href="../attack/start/{{ active.id }}"/>Attack it#}
                                                     {% elif atk == 0 %}
                                                         No ATKFACE
@@ -363,6 +358,8 @@
 	
 	
 	<script src={% static "js/easypiechart.js" %}></script>
+    <script src={% static "js/active.js" %}></script>
+
 	<script src={% static "js/easypiechart-data.js" %}></script>
 	
 	 <script src={% static "js/Lightweight-Chart/jquery.chart.js" %}></script>
@@ -381,3 +378,18 @@
 </body>
 
 </html>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>test</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>test</td>
+        </tr>
+    </tbody>
+</table>

@@ -1,55 +1,38 @@
- *{
-            margin: 0;
-            padding: 0;
-        }
-        .switch{
-            width: 700px;
-            height: 50px;
-            margin: 100px 100px;
-            padding: 20px 50px;
-        }
-        span{
-            margin-left: 15px;
-            margin-right: 50px;
-            font-weight: 200;
-            opacity: 0.8;
-        }
-        .onoff::before{
-            content: "";
-            display: block;
-            width: 40px;
-            height: 24.5px;
-            border-radius: 25px;
-            margin-left: -23px;
-            margin-top: -4px;
-        }
-        .onoff::after{
-            content: "";
-            display: block;
-            width: 25px;
-            height: 25px;
-            background-color: rgb(255, 255, 255);
-            margin-left: -22px;
-            margin-top: -26px;
-            transition: margin 0.2s ease-in 0.2s;
-            border-radius: 25px;
-        }
-        .onoff:checked::after{
-            margin-left:-7px;
-        }
-        .sw1::before{
-            border: 1px solid rgb(156, 155, 155);
-            background-color: rgb(179, 176, 176);
-        }
-        .sw2::before{
-            border: 1px solid rgb(127, 154, 241);
-            background-color: rgb(127, 154, 241);
-        }
-        .sw3::before{
-            border: 1px solid rgb(144, 253, 129);
-            background-color: rgb(144, 253, 129);
-        }
-        .sw4::before{
-            border: 1px solid rgb(255, 138, 138);
-            background-color: rgb(255, 138, 138);
-        }
+/* 背景层 */
+.switch-component {
+position: relative;
+width: 60px;
+height: 30px;
+background-color: #dadada;
+border-radius: 30px;
+border: none;
+outline: none;
+-webkit-appearance: none;
+transition: all .2s ease;
+}
+
+
+/* 按钮 */
+.switch-component::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 50%;
+height: 100%;
+background-color: #fff;
+border-radius: 50%;
+transition: all .2s ease;
+}
+
+
+/* 选中状态时，背景色切换 */
+.switch-component:checked {
+background-color: #86c0fa;
+}
+
+
+/* 选中状态时，按钮的位置移动 */
+.switch-component:checked::after {
+left: 50%;
+}

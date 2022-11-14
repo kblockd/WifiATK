@@ -7,20 +7,19 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
 
-    path('chart/', views.Chart.as_view()),
-    path('empty/', views.Empty.as_view()),
-    path('form/', views.Form.as_view()),
-    path('tab-panel/', views.Tab_panel.as_view()),
-    path('ui-elements/', views.Ui_elements.as_view()),
-
     re_path(r'^$', RedirectView.as_view(url='index/')),
-    path('index/', views.Index.as_view()),
-    path('active/', views.Active.as_view()),
-    path('wifilog/', views.Wifi.as_view()),
-    path('stationlog/', views.Station.as_view()),
+    path('index/', views.Index_api.as_view(), name='index'),
+    path('active/', views.Active_api.as_view(), name='active'),
+    path('wifi/', views.Wifi_api.as_view(), name='wifi'),
+    path('station/', views.Station_api.as_view(), name='station'),
 
-    path('attack/start/<int:wifi_id>/', views.attack, name='attack'),
-    path('attack/stop/<int:wifi_id>/', views.attack, name='attack'),
+    path('attack/start/<int:wifi_id>/', views.attack, name='attack_start'),
+    path('attack/stop/<int:wifi_id>/', views.attack, name='attack_stop'),
+
+    path('config/get/', views.Config_api.as_view(), name='config_get'),
+    path('config/set/<key>/<value>', views.Config_api.set, name='config_set'),
+
+    # path('activelog/',views.Active_api.as_view()),
     # path('host/start/<int:wifi_id>/', views.host_atk, name='host'),
     # path('host/stop/<int:wifi_id>/', views.host_atk, name='host'),
 

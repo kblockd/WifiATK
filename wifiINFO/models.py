@@ -12,6 +12,7 @@ from django.db import connection
 class Conf(models.Model):
     MONFACE = models.CharField(db_column='MONFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
     ATKFACE = models.CharField(db_column='ATKFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    HOSTFACE = models.CharField(db_column='HOSTFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
     LOGDIR = models.CharField(db_column='LOGDIR', max_length=255, blank=True, null=True)  # Field name made lowercase.
     LOGNAME = models.CharField(db_column='LOGNAME', max_length=255, blank=True, null=True)  # Field name made lowercase.
     LOG = models.CharField(db_column='LOG', max_length=255, blank=True, null=True)  # Field name made lowercase.

@@ -16,9 +16,11 @@
     <!-- FontAwesome Styles-->
     <link href={% static "css/font-awesome.css" %} rel="stylesheet" />
     <!-- Morris Chart Styles-->
-    <link href={% static "js/morris/morris-0.4.3.min.css" %} rel="stylesheet" />
+    <link rel="stylesheet"href={% static "js/morris/morris-0.4.3.min.css" %}  />
     <!-- Custom Styles-->
-    <link href={% static "css/custom-styles.css" %} rel="stylesheet" />
+    <link rel="stylesheet" href={% static "css/custom-styles.css" %}  />
+    <link rel="stylesheet" type="text/css" href={% static "css/active.css" %}    />
+
     <!-- Google Fonts-->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
     <link rel="stylesheet" href={% static "js/Lightweight-Chart/cssCharts.css" %}>
@@ -306,12 +308,21 @@
                                                 <td>{{ active.cipher }}</td>
                                                 <td>{{ active.authentication }}</td>
                                                 <td>
-                                                    {% if active.essid != None %}
-                                                        <a href="../host/start/{{ active.id }}"/>Host it
+                                                    {% if active.client != None %}
+                                                        <div class="switch">
+                                                            <label>
+{#                                                                <input type="checkbox" name="checkboxswitch" value="{{ active.id }}" class="onoff sw3" checked><span>switch large</span>#}
+
+                                                                <input type="checkbox" name="checkboxswitch" class="onoff sw2" checked>
+
+{#                                                                <input type="checkbox" value="{{ active.id }}" name="attack" class="onoff">#}
+                                                            </label>
+                                                        </div>
+{#                                                        <a href="../attack/start/{{ active.id }}"/>Attack it#}
                                                     {% elif atk == 0 %}
                                                         No ATKFACE
                                                     {% else %}
-                                                        No Essid
+                                                        No Client
                                                     {% endif %}
                                                 </td>
                                             </tr>

@@ -12,3 +12,5 @@ pyparsing==3.0.9
 redis==4.3.4
 sqlparse==0.4.3
 wrapt==1.14.1
+
+PyRIC~=0.1.6.3

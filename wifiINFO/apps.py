@@ -10,10 +10,10 @@ import sys
 def init_data(sender, **kwargs):
     from wifiINFO.models import Conf
     if Conf.objects.count() == 0:
-        conf_data = {"id": 1, "MONFACE": None, "ATKFACE": None,
-                    "LOGDIR": None, "LOGNAME": None, "LOG":None,
-                    "HOST_PID":None, "DNSMASQ_PID":None, "MAIN_STATUS": 0, "ATK_STATUS": 0,
-        }
+        conf_data = {"id": 1, "MONFACE": None, "ATKFACE": None, "HOSTFACE": None,
+                     "LOGDIR": None, "LOGNAME": None, "LOG": None,
+                     "HOST_PID": None, "DNSMASQ_PID": None, "MAIN_STATUS": 0, "ATK_STATUS": 0,
+                     }
         Conf.objects.create(**conf_data)
 
 
@@ -29,7 +29,6 @@ class WifiinfoConfig(AppConfig):
             return
 
         os.environ['CMDLINERUNNER_RUN_ONCE'] = 'True'
-
         post_migrate.connect(init_data, sender=self)
 
         """规避其他功能执行"""

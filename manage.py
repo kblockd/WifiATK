@@ -5,14 +5,15 @@ import sys
 import atexit
 
 
-def exit_status():
+def on_exit():
     if 'runserver' in sys.argv:
-        import wifiINFO
+        from wifiINFO.common import config as configer
+        config = configer.ConfigManager()
         # if wifiINFO.config.get_value('') is not None:
-        #     global host
-        #     global dnsmasq
-        #     wifiINFO.config.set_value('HOST_PID',None)
-        # wifiINFO.models.Conf.objects.filter(id=1).update(MAIN_STATUS=0)
+        #     # global host
+        #     # global dnsmasq
+        #     config.set(HOST_PID=None)
+        config.on_exit()
 
 
 def main():
@@ -30,5 +31,5 @@ def main():
 
 
 if __name__ == '__main__':
-    atexit.register(exit_status)
+    atexit.register(on_exit)
     main()

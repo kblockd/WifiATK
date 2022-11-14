@@ -56,8 +56,8 @@ ROOT_URLCONF = 'WifiATK.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-       # 'DIRS': [BASE_DIR / 'templates'],
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        # 'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,7 +82,7 @@ DATABASES = {
         "NAME": "Wifi",
         "USER": "wifi",
         "PASSWORD": "WifiAttack123.",
-        "HOST": "127.0.0.1",
+        "HOST": "192.168.31.139",
         "POST": 3306,
         'OPTIONS': {'charset': 'utf8mb4'},
     }
@@ -135,7 +135,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-if DEBUG == False:
+if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'templates/assets')
 else:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, "templates/assets")]
@@ -147,8 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRONJOBS = [
     ('*/1 * * * *', 'wifiINFO.wifi.cron_data', ' >> /tmp/crondata.log'),
-   # ('*/3 * * * *', 'wifiINFO.attack.cron_atk', ' >> /tmp/cronatk.log'),
-    ('*/1 * * * *', 'wifiINFO.wifi.cron_activelog', '>> /tmp/crondata.log'),
+    ('*/3 * * * *', 'wifiINFO.wifi.cron_atk', ' >> /tmp/cronatk.log'),
 ]
 
-APPEND_SLASH=True
+APPEND_SLASH = True  # url路径自动加/

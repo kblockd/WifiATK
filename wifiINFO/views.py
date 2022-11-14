@@ -1,20 +1,15 @@
 # -*- coding: utf-8
-from django.shortcuts import render
+import traceback
+
 from django.views import View
-from django.http import JsonResponse
-from wifiINFO.wifi import *
-from wifiINFO.attack import *
-from wifiINFO.models import *
 from django.db.models import F
-from wifiINFO.utils import myasync
-import re
-"""
-------------------------------------------------------------------------------------------
-View类
-------------------------------------------------------------------------------------------
-"""
+from django.shortcuts import render
+from django.http import JsonResponse
 
+from wifiINFO.common import config as configer
+from wifiINFO.models import Wifilog, Stationlog, Activelog
 
+config = configer.ConfigManager()
 
 
 class Chart(View):
@@ -148,7 +143,7 @@ class Index(View):
                 "wifi_logs": wifi_logs,
                 "station_logs": station_logs,
             }
-            if Conf.objects.filter(id=1).values('ATKFACE').get() is None:
+            if config.get('ATKFACE') is None:
                 atk = 0
             else:
                 atk = 1
@@ -172,6 +167,7 @@ class Active(View):
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
+            return False
         return render(request, 'active.html',{'active_data':active_data})
 
     def post(self,request):
@@ -183,6 +179,7 @@ class Active(View):
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
+            return False
         return render(request, 'active.html', {'active_data': active_data})
 
 
@@ -195,6 +192,7 @@ class Wifi(View):
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
+            return False
         return render(request, 'wifilog.html',{'wifi_data':wifi_data})
 
     def post(self,request):
@@ -205,6 +203,7 @@ class Wifi(View):
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
+            return False
         return render(request, 'wifilog.html',{'wifi_data':wifi_data})
 
 
@@ -232,10 +231,29 @@ class Station(View):
             return False
         return render(request, 'stationlog.html', {'station_data': station_data})
 
-def host_atk(request, wifi_id):
-    try:
-        pids = start_host(wifi_id)
+# def host_atk(request, wifi_id):
+#     try:
+#         pids = start_host(wifi_id)
+#
+#         return JsonResponse(pids)
+#     except Exception as e:
+#         print(e)
 
-        return JsonResponse(pids)
-    except Exception as e:
-        print(e)
+
+def attack(request, wifi_id):
+    try:
+        from wifiINFO.common import attacker
+        target = Activelog.objects.get(id=wifi_id)
+        process = attacker.AttackManager().deauth(target.bssid, target.channel)
+    except:
+        print('\n', '>>>' * 20)
+        print(traceback.print_exc())
+        print('\n', '>>>' * 20)
+        print(traceback.format_exc())
+        return False
+
+    return JsonResponse({'pid': process.pid})
+
+
+class Config(View):
+    pass

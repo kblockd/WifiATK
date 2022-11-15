@@ -68,7 +68,7 @@ export default defineComponent({
             "ATK_STATUS": false,
         })
         const getData = () => {
-            axios.get("manager/api/config/get/").then(r => {
+            axios.get("../api/config/get/").then(r => {
                 for (let i of r.data["data"]) {
                     settingData["MONFACE"] = i["MONFACE"]
                     settingData["MONFACE"] = i["MONFACE"]
@@ -90,7 +90,7 @@ export default defineComponent({
             set(r, settingData[r])
         }
         const set = (key, value) => {
-            axios.get("manager/api/config/set/" + key + "/" + value + "/").then(r => {
+            axios.get("../api/config/set/" + key + "/" + value + "/").then(r => {
                 Message.success("设置成功")
             })
         }

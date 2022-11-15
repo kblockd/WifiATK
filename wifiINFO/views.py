@@ -2,32 +2,22 @@
 import os
 import signal
 import traceback
-import json
-import datetime
 
 from django.views import View
 from django.db.models import F
 from django.shortcuts import render
 from django.http import JsonResponse
 
-# from wifiINFO.common import config as configer
 from wifiINFO.common import attacker
 from wifiINFO.common import settings as configer
-from wifiINFO.models import Wifilog, Stationlog, Activelog, Conf
+from wifiINFO.models import Wifilog, Stationlog, Activelog, Settings
 
 config = configer.ConfigManager()
 
 
-class DateEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return obj.strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            return json.JSONEncoder.default(self, obj)
-
-
 class Index_api(View):
-    def get(self,request):
+    @staticmethod
+    def get(request):
         try:
             active_wifis = Activelog.objects.count()
             active_clients = []
@@ -48,17 +38,18 @@ class Index_api(View):
             }
             data["data"] = data_list
 
-
             return JsonResponse(data, safe=False)
 
-        except Exception as e:
+        except ValueError:
+
             print('\n', '>>>' * 20)
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
             return False
 
-    def post(self,request):
+    @staticmethod
+    def post(request):
         try:
             active_wifis = Activelog.objects.count()
             active_clients = []
@@ -93,7 +84,6 @@ class Index_api(View):
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
             return False
-
 
 
 class Active_api(View):
@@ -195,10 +185,12 @@ def attack(request, wifi_bssid):
 class Config_api(View):
 
     def get(self, request):
-        model = Conf.objects.all().values()
-
+        model = Settings.objects.all()
+        data_s = dict()
+        for temp in model:
+            data_s[temp.key] = temp.value
         data = dict()
-        data["data"] = list(model)
+        data["data"] = data_s
         return JsonResponse(data, safe=False)
 
     @staticmethod

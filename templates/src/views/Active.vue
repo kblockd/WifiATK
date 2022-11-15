@@ -94,14 +94,14 @@ export default defineComponent({
         }])
         const getData = () => {
             tableData.length = 0
-            axios.get("manager/api/active/").then(r => {
+            axios.get("../api/active/").then(r => {
                 for (let i of r.data["data"]) {
                     tableData.push(i)
                 }
             })
         }
         const stop = (bassid) => {
-            axios.get("manager/api/attack/stop/" + attack_bssid + "/").then(r => {
+            axios.get("../api/attack/stop/" + attack_bssid + "/").then(r => {
                 if (r.data["data"]["sucess"] === 1) {
                     Message.success("停止成功")
                     attack_bssid.value = ""
@@ -114,7 +114,7 @@ export default defineComponent({
             if (attack_bssid.value !== "") {
                 stop(attack_bssid)
             }
-            axios.get("manager/api/attack/start/" + bssid + "/").then(r => {
+            axios.get("../api/attack/start/" + bssid + "/").then(r => {
                 if (r.data["data"]["sucess"] === 1) {
                     attack_bssid.value = bssid
                     Message.success("攻击成功")

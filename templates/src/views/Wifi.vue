@@ -84,7 +84,7 @@ export default defineComponent({
         }])
         const getData = () => {
             tableData.length = 0
-            axios.get("manager/api/wifi/").then(r => {
+            axios.get("../api/wifi/").then(r => {
                 for (let i of r.data["data"]) {
                     tableData.push(i)
                     console.log(r.data)

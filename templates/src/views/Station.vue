@@ -66,7 +66,7 @@ export default defineComponent({
         }])
         const getData = () => {
             tableData.length = 0
-            axios.get("manager/api/station/").then(r => {
+            axios.get("../api/station/").then(r => {
                 for (let i of r.data["data"]) {
                     tableData.push(i)
                 }

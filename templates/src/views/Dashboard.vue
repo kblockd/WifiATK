@@ -57,7 +57,7 @@ export default defineComponent({
         const wl = ref(0)
         const sl = ref()
         onMounted(() => {
-            axios.get("manager/api/index/").then(r => {
+            axios.get("../api/index/").then(r => {
                 aw.value = r.data["data"]["active_wifis"]
                 ac.value = r.data["data"]["active_clients"]
                 wl.value = r.data["data"]["wifi_logs"]

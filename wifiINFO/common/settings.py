@@ -147,6 +147,9 @@ class ConfigManager(object):
 
         count = 0
         for interface in pyw.interfaces():
+            if interface == 'wlan0':
+                continue
+
             try:
                 card = pyw.getcard(interface)
                 mac_address = pyw.macget(card)

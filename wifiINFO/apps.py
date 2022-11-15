@@ -17,8 +17,7 @@ def init_data(sender, **kwargs):
 
         for key in conf_list.keys():
             value = conf_list[key]
-            conf = {key:value}
-            Settings.objects.update_or_create(**conf)
+            Settings.objects.filter(key=key).update(value=value)
 
 
 class WifiinfoConfig(AppConfig):
@@ -37,4 +36,4 @@ class WifiinfoConfig(AppConfig):
 
         """规避其他功能执行"""
         if 'runserver' in sys.argv:
-            autodiscover_modules('wifi.py')
+            autodiscover_modules('start.py')

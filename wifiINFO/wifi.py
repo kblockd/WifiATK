@@ -1,6 +1,6 @@
 from wifiINFO.common import monitor, attacker
 from wifiINFO.common import settings as configer
-import time
+
 
 
 class WifiATKEngine(object):
@@ -39,18 +39,3 @@ def cron_atk():
 
     attacker.AttackManager().cron_atk()
 
-
-def first_start():
-
-    time1 = time.time()
-
-    Engine = WifiATKEngine()
-
-    Engine.start()
-
-    time2 = time.time()
-    print('启动成功，消耗时间：{}'.format(time2-time1))
-
-
-if __name__ == 'wifiINFO.wifi':
-    first_start()

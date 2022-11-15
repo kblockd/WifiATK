@@ -7,7 +7,9 @@ import atexit
 
 def on_exit():
     if 'runserver' in sys.argv:
-        from wifiINFO.common import config as configer
+        # from wifiINFO.common import config as configer
+        from wifiINFO.common import settings as configer
+
         config = configer.ConfigManager()
         # if wifiINFO.config.get_value('') is not None:
         #     # global host

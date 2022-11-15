@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c1!r#$5g08(g6akt&gn5fommd^oo&500d#vzdhrl4@*70d*!je'
+SECRET_KEY = 'django-insecure-n-l4th$1ngnk9cyl-56+#)!&75bow$%(4y3@p!6!qf+-+gh4)y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -50,6 +50,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+# 允许所有的请求头
+CORS_ALLOW_HEADERS = (' * ')
 
 ROOT_URLCONF = 'WifiATK.urls'
 
@@ -134,11 +141,11 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'assets/'
 if not DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'templates/assets')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'templates/dist/assets')
 else:
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, "templates/assets")]
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "templates/dist/assets")]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

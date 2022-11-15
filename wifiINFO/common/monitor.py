@@ -4,7 +4,8 @@ import traceback
 import time
 import logging
 
-from wifiINFO.common import config as configer
+# from wifiINFO.common import config as configer
+from wifiINFO.common import settings as configer
 
 logger = logging.getLogger("wifiINFO.monitor")
 
@@ -79,7 +80,7 @@ class MonitorManager(object):
             time.sleep(10)  # 启动等待
             if os.path.exists(LOG) and os.stat(LOG).st_size > 200:
                 config.set(
-                    MAIN_STATUS=1
+                    MAIN_STATUS=True
                 )
                 return process.pid
             else:

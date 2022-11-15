@@ -5,7 +5,9 @@ import datetime
 import linecache
 
 from wifiINFO.common import utils
-from wifiINFO.common import config as configer
+# from wifiINFO.common import config as configer
+from wifiINFO.common import settings as configer
+
 from wifiINFO.models import Wifilog, Stationlog, Activelog
 
 logger = logging.getLogger("wifiINFO.dataparser")
@@ -253,6 +255,8 @@ class Dataparser(object):
 
         create_list = []
 
+        ATK_BSSID = config.get('ATK_BSSID')
+
         for wifi in new_wifi_list:
             bssid = wifi['bssid']
             channel = wifi['channel']
@@ -273,6 +277,11 @@ class Dataparser(object):
             client = utils.is_data_null(','.join(client))
             essid = utils.is_data_null(essid)
 
+            if bssid == ATK_BSSID:
+                ATK_STATUS = True
+            else:
+                ATK_STATUS = False
+
             create_list.append(
                 Activelog(
                     bssid=bssid,
@@ -281,7 +290,8 @@ class Dataparser(object):
                     channel=channel,
                     privacy=privacy,
                     cipher=cipher,
-                    authentication=authentication
+                    authentication=authentication,
+                    ATK_STATUS=ATK_STATUS
                 )
             )
 

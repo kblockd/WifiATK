@@ -8,13 +8,17 @@ import sys
 
 
 def init_data(sender, **kwargs):
-    from wifiINFO.models import Conf
-    if Conf.objects.count() == 0:
-        conf_data = {"id": 1, "MONFACE": None, "ATKFACE": None, "HOSTFACE": None,
+    from wifiINFO.models import Settings
+    if Settings.objects.count() == 0:
+        conf_list = {"MONFACE": None, "ATKFACE": None, "HOSTFACE": None,
                      "LOGDIR": None, "LOGNAME": None, "LOG": None,"ATK_PID": None,
-                     "HOST_PID": None, "DNSMASQ_PID": None, "MAIN_STATUS": 0, "ATK_STATUS": 0,
+                     "HOST_PID": None, "DNSMASQ_PID": None, "MAIN_STATUS": False, "ATK_STATUS": False,
                      }
-        Conf.objects.create(**conf_data)
+
+        for key in conf_list.keys():
+            value = conf_list[key]
+            conf = {key:value}
+            Settings.objects.update_or_create(**conf)
 
 
 class WifiinfoConfig(AppConfig):
@@ -33,4 +37,4 @@ class WifiinfoConfig(AppConfig):
 
         """规避其他功能执行"""
         if 'runserver' in sys.argv:
-            autodiscover_modules('start.py')
+            autodiscover_modules('wifi.py')

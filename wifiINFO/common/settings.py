@@ -31,13 +31,14 @@ class ConfigManager(object):
         self._HOSTFACE = None
         self._interfaces = self.get_interfaces()
 
+        self._MAIN_PID = None
         self._ATK_BSSID = None
         self._ATK_PID = None
         self._HOST_PID = None
         self._DNSMASQ_PID = None
 
-        self._MAIN_STATUS = None
-        self._ATK_STATUS = parser.get('STATUS', 'ATK_STATUS')
+        self._MAIN_STATUS = False
+        self._ATK_STATUS = False
 
     def initialize(self):
         inters_count = len(self._interfaces)
@@ -72,6 +73,7 @@ class ConfigManager(object):
                 MONFACE=MONFACE_NAME,
                 ATKFACE=ATKFACE_NAME,
                 HOSTFACE=HOSTFACE_NAME,
+                MAIN_PID=self._MAIN_PID,
                 ATK_BSSID=self._ATK_BSSID,
                 ATK_PID=self._ATK_PID,
                 HOST_PID=self._HOST_PID,
@@ -132,6 +134,7 @@ class ConfigManager(object):
             MONFACE=None,
             ATKFACE=None,
             HOSTFACE=None,
+            MAIN_PID=None,
             ATK_BSSID=None,
             ATK_PID=None,
             HOST_PID=None,

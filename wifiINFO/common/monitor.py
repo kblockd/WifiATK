@@ -1,4 +1,5 @@
 import os
+import signal
 import subprocess
 import traceback
 import time
@@ -31,6 +32,7 @@ class MonitorStartError(Exception):
 class MonitorManager(object):
     def __init__(self):
         self.process = None
+        self.pid = None
         self.config = configer.ConfigManager()
 
     def init_log(self):
@@ -80,7 +82,8 @@ class MonitorManager(object):
             time.sleep(10)  # 启动等待
             if os.path.exists(LOG) and os.stat(LOG).st_size > 200:
                 config.set(
-                    MAIN_STATUS=True
+                    MAIN_STATUS=True,
+                    MAIN_PID=process.pid
                 )
                 return process.pid
             else:
@@ -91,6 +94,10 @@ class MonitorManager(object):
         raise SystemError
 
     def stop(self):
-        process = self.process
-        if process is not None:
-            process.kill()
+        pid = self.config.get('MAIN_PID')
+        if pid:
+            try:
+                os.kill(pid, signal.SIGKILL)
+                return True
+            except SystemError:
+                return False

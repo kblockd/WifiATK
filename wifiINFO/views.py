@@ -1,5 +1,6 @@
 # -*- coding: utf-8
 import os
+import re
 import signal
 import traceback
 
@@ -183,7 +184,15 @@ def attack(request, wifi_bssid):
 
 
 class Config_api(View):
+    def success(self):
+        data = dict()
+        data["data"] = {"success": 1}
+        return JsonResponse(data, safe=False)
 
+    def error(self):
+        data = dict()
+        data["data"] = {"success": 0}
+        return JsonResponse(data, safe=False)
     def get(self, request):
         model = Settings.objects.all()
         data_s = dict()
@@ -193,17 +202,40 @@ class Config_api(View):
         data["data"] = data_s
         return JsonResponse(data, safe=False)
 
-    @staticmethod
     def set(self, request, key, value):
         try:
-            config.set()
-            data = dict()
-            data["data"] = {"success": 1}
-            return JsonResponse(data, safe=False)
+            action = key
+
+            if action == 'MAIN_STATUS':
+                from wifiINFO.common import monitor
+                if config.get('MAIN_STATUS') == value:
+                    pass
+                elif value:
+                    try:
+                        monitor.MonitorManager().stop()
+                        config.set(MAIN_STATUS=value)  # 关闭
+                        return self.success()
+                    except:
+                        return self.error()
+                else:
+                    try:
+                        monitor.MonitorManager().start()
+                        config.set(MAIN_STATUS=value)  # 打开
+                        return self.success()
+                    except:
+                        return self.error()
+
+            elif action == 'ATK_STATUS':
+                config.set(ATK_STATUS=value)
+                return self.success()
+            elif action == 'LOGNAME':
+                config.set(LOGNAME=value)
+                return self.success()
+            else:
+                config.set(**{key: value})
+                return self.success()
         except:
-            data = dict()
-            data["data"] = {"success": 0}
-            return JsonResponse(data, safe=False)
+            return self.error()
 
 
 def UI(request):

@@ -10,7 +10,7 @@ import sys
 def init_data(sender, **kwargs):
     from wifiINFO.models import Settings
     if Settings.objects.count() == 0:
-        conf_list = {"MONFACE": None, "ATKFACE": None, "HOSTFACE": None,
+        conf_list = {"MONFACE": None, "ATKFACE": None, "HOSTFACE": None, "MAIN_PID": None,
                      "LOGDIR": None, "LOGNAME": None, "LOG": None,"ATK_PID": None,
                      "HOST_PID": None, "DNSMASQ_PID": None, "MAIN_STATUS": False, "ATK_STATUS": False,
                      }

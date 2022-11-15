@@ -9,16 +9,46 @@
                     </a-button>
                 </a-typography-title>
                 <a-divider style="margin-bottom: 20px; border-bottom: 1px solid rgb(var(--gray-2));"/>
-                <a-table :columns="columns" :data="tableData">
-                    <template #optional="{ record }">
-                        <a-button type="primary" :disabled="record.client === null" @click="attack(record.bssid)"
-                                  v-if="record.bssid !== attack_bssid || record.ATK_STATUS === false">
-                            Attack
-                        </a-button>
-                        <a-button type="primary" status="danger"
-                                  v-if="record.bssid === attack_bssid || record.ATK_STATUS === true">
-                            Stop
-                        </a-button>
+                <a-table :data="tableData">
+                    <template #columns>
+                        <a-table-column title="id" data-index="id"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="bssid" data-index="bssid"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="essid" data-index="essid"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="client" data-index="client"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}">
+                            <template #cell="{ record }">
+                                <a-space v-if="record.client !== 'NULL'">
+                                    <a-tag v-for="c in record.client">
+                                        {{ c }}
+                                    </a-tag>
+                                </a-space>
+                                <a v-else-if="record.client === 'NULL'">{{ record.client }} </a>
+                            </template>
+                        </a-table-column>
+                        <a-table-column title="channel" data-index="channel"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="privacy" data-index="privacy"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="cipher" data-index="cipher"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="authentication" data-index="authentication"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="optional" data-index="optional">
+                            <template #cell="{ record }">
+                                <a-button type="primary" :disabled="record.client === 'NULL'"
+                                          @click="attack(record.bssid)"
+                                          v-if="record.bssid !== attack_bssid || record.ATK_STATUS === false">
+                                    Attack
+                                </a-button>
+                                <a-button type="primary" status="danger"
+                                          v-if="record.bssid === attack_bssid || record.ATK_STATUS === true">
+                                    Stop
+                                </a-button>
+                            </template>
+                        </a-table-column>
                     </template>
                 </a-table>
             </a-col>
@@ -40,63 +70,22 @@ export default defineComponent({
     setup() {
         const attack_bssid = ref("")
         const tableData = reactive([])
-        const columns = reactive([{
-            title: 'id',
-            dataIndex: 'id',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'bssid',
-            dataIndex: 'bssid',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'essid',
-            dataIndex: 'essid',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'client',
-            dataIndex: 'client',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'channel',
-            dataIndex: 'channel',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'privacy',
-            dataIndex: 'privacy',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'cipher',
-            dataIndex: 'cipher',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'authentication',
-            dataIndex: 'authentication',
-            sortable: {
-                sortDirections: ['ascend', 'descend']
-            }
-        }, {
-            title: 'optional',
-            slotName: 'optional',
-        }])
         const getData = () => {
             tableData.length = 0
             axios.get("../api/active/").then(r => {
                 for (let i of r.data["data"]) {
-                    tableData.push(i)
+                    let r = {
+                        "ATK_STATUS": i["ATK_STATUS"],
+                        "id": i["id"],
+                        "authentication": i["authentication"],
+                        "bssid": i["bssid"],
+                        "channel": i["channel"],
+                        "cipher": i["cipher"],
+                        "essid": i["essid"],
+                        "privacy": i["privacy"],
+                    }
+                    r["client"] = i["client"] === null ? "NULL" : i["client"].split(",")
+                    tableData.push(r)
                 }
             })
         }
@@ -127,7 +116,6 @@ export default defineComponent({
             getData()
         })
         return {
-            columns,
             tableData,
             getData,
             attack,

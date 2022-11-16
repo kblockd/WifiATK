@@ -20,12 +20,15 @@
                         <a-table-column title="client" data-index="client"
                                         :sortable="{sortDirections: ['ascend', 'descend']}">
                             <template #cell="{ record }">
+                              <div class="client" style="white-space: pre-wrap;" >
                                 <a-space v-if="record.client !== 'NULL'">
-                                    <a-tag v-for="c in record.client">
-                                        {{ c }}
-                                    </a-tag>
+<!--                                    <a-tag v-for="c in record.client" >-->
+<!--                                        {{ c }}-->
+                                  {{ record.client }}
+<!--                                    </a-tag>-->
                                 </a-space>
                                 <a v-else-if="record.client === 'NULL'">{{ record.client }} </a>
+                              </div>
                             </template>
                         </a-table-column>
                         <a-table-column title="channel" data-index="channel"
@@ -84,7 +87,7 @@ export default defineComponent({
                         "essid": i["essid"],
                         "privacy": i["privacy"],
                     }
-                    r["client"] = i["client"] === null ? "NULL" : i["client"].split(",")
+                    r["client"] = i["client"] === null ? "NULL" : i["client"].replace(/,/g,'\n')
                     tableData.push(r)
                 }
             })

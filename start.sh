@@ -12,7 +12,7 @@ init_network(){
 	sudo systemctl stop NetworkManager
 	sudo systemctl disable NetworkManager
 
-	sudo cat > /etc/wpa_supplicant/wpa_supplicant.conf <<EOF  #修改管理用Wi-Fi和密码
+	cat > /etc/wpa_supplicant/wpa_supplicant.conf <<EOF  #修改管理用Wi-Fi和密码
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 country=CN
@@ -27,7 +27,7 @@ EOF
 	temp=$(ip route show |grep default |grep wlan0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
 	eval $temp
 
-	sudo cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
+	cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
 
@@ -57,7 +57,7 @@ EOF
 ##############
 init_soft(){
 	sudo apt update && apt upgrade -y
-	sudo apt install git vim nginx mariadb-server uwsgi python3 python3-pip tmux aircrack-ng -y
+	sudo apt install git vim nginx mariadb-server uwsgi uwsgi-plugin-python3 python3 python3-pip tmux aircrack-ng -y
 	sudo apt install dnsmasq hostapd bc build-essential dkms  -y
 	sudo apt install libnl-3-dev libnl-genl-3-dev libssl-dev -y
 	sudo pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
@@ -108,6 +108,7 @@ init_env(){
 	sudo virtualenv venv
 	virtual="`pwd`/venv/bin"
 	sudo $virtual/pip3 install -r requirements.txt
+
 }
 
 ############
@@ -132,7 +133,27 @@ init_database(){
 ##########
 sstart(){
 	cd /opt/Wifi/WifiATK/
-	virtual="`pwd`/venv/bin"
+	cwd = `pwd`
+	virtual="$cwd/venv/bin"
+		cat > /etc/systemd/system/uwsgi.service << EOF
+[Unit]
+Description=uwsgi
+After=network.target
+[Service]
+Type=notify
+ExecStart=/usr/bin/uwsgi --ini $cwd/uwsgi.ini
+ExecReload=/usr/bin/uwsgi --reload /var/run/uwsgi.pid
+ExecStop=/usr/bin/uwsgi --stop /var/run/uwsgi.pid
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  sudo systemctl daemon-reload
+  sudo systemctl start uwsgi
+  sudo systemctl enable uwsgi
+
 	sudo nohup $virtual/python3 manage.py runserver 0.0.0.0:8080 --noreload > /tmp/wifi.log 2>&1 &
 
 }

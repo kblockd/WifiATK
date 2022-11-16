@@ -35,5 +35,5 @@ class WifiinfoConfig(AppConfig):
         post_migrate.connect(init_data, sender=self)
 
         """规避其他功能执行"""
-        if 'runserver' in sys.argv:
+        if 'runserver' in sys.argv or 'uwsgi' in sys.argv:
             autodiscover_modules('start.py')

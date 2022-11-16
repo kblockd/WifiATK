@@ -1,7 +1,6 @@
 import os
 import re
 import logging
-import configparser
 import pyric.pyw
 import pyric.pyw as pyw
 
@@ -13,11 +12,9 @@ logger = logging.getLogger("wifiINFO.config")
 
 class ConfigManager(object):
 
-    def __init__(self):
+    def __init__(self, loganme='TEST123'):
 
-        parser = configparser.ConfigParser()
-        parser.read('config.ini')
-        self._LOGNAME = parser.get('LOG', 'LOGNAME')
+        self._LOGNAME = loganme
         self._LOGDIR = os.getcwd()
 
         try:

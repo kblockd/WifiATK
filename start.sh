@@ -18,8 +18,8 @@ update_config=1
 country=CN
 
 network={
-	ssid="test"
-	psk="123456"
+	ssid=""
+	psk="TestWifi123."
 }
 EOF
   sudo systemctl restart networking
@@ -122,18 +122,19 @@ init_database(){
 	sudo systemctl enable mysql
 	sudo systemctl start mysql
 
-	sqlpass=$(echo $RANDOM | md5sum | head -c 20)
+	# sqlpass=$(echo $RANDOM | md5sum | head -c 20)
+	sqlpass="WifiAttack123."
 
 	cat > ./start.sql <<EOF
 CREATE DATABASE Wifi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 CREATE USER 'wifi'@'localhost' IDENTIFIED BY '$sqlpass';
-# CREATE USER 'wifi'@'%' IDENTIFIED BY '$sqlpass';
+CREATE USER 'wifi'@'%' IDENTIFIED BY '$sqlpass';
 
 GRANT ALL ON Wifi.* TO 'wifi'@'localhost';
 GRANT ALL ON Wifi.* TO 'wifi'@'%';
 EOF
-  sudo sed -i 's/DEFAULT_PASSWORD/$sqlpass/' WifiATK/settings.py
+  # sudo sed -i 's/DEFAULT_PASSWORD/$sqlpass/' WifiATK/settings.py
 
 
 	sudo mysql -u root < start.sql

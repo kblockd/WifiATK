@@ -90,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         "NAME": "Wifi",
         "USER": "wifi",
-        "PASSWORD": "DEFAULT_PASSWORD",
+        "PASSWORD": "WifiAttack123.",
         "HOST": "127.0.0.1",
         "POST": 3306,
         'OPTIONS': {'charset': 'utf8mb4'},

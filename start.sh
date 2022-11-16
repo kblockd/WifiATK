@@ -18,7 +18,7 @@ update_config=1
 country=CN
 
 network={
-	ssid=""
+	ssid="Mwifi"
 	psk="TestWifi123."
 }
 EOF
@@ -154,14 +154,23 @@ sstart(){
 	virtual="$cwd/venv/bin"
 		cat > /etc/systemd/system/uwsgi.service << EOF
 [Unit]
+[Unit]
 Description=uwsgi
 After=network.target
+
 [Service]
-Type=notify
-ExecStart=/usr/bin/uwsgi --ini $cwd/uwsgi.ini
+Type=forking
+WorkingDirectory=/opt/Wifi/WifiATK
+PIDFile=/var/run/uwsgi.pid
+Restart=always
+KillSignal=SIGQUIT
+StandardError=syslog
+NotifyAccess=all
+
+ExecStartPre=bash -c 'cd /opt/Wifi/WifiATK/; git reset --hard master && git pull  --force'
+ExecStart=/opt/Wifi/WifiATK/venv/bin/uwsgi --ini /opt/Wifi/WifiATK/uwsgi.ini
 ExecReload=/usr/bin/uwsgi --reload /var/run/uwsgi.pid
 ExecStop=/usr/bin/uwsgi --stop /var/run/uwsgi.pid
-Restart=always
 
 [Install]
 WantedBy=multi-user.target

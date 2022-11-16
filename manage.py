@@ -6,11 +6,11 @@ import atexit
 
 
 def on_exit():
-    if 'runserver' in sys.argv:
+    if 'runserver' or 'uwsgi' in sys.argv:
         # from wifiINFO.common import config as configer
         from wifiINFO.common import settings as configer
 
-        config = configer.ConfigManager()
+        config = configer.ConfigManager().initialize()
         # if wifiINFO.config.get_value('') is not None:
         #     # global host
         #     # global dnsmasq

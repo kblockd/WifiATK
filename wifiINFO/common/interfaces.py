@@ -1,6 +1,6 @@
 import subprocess
 import time
-
+import traceback
 import pyric.pyw as pyw
 import pyric
 import logging
@@ -312,7 +312,8 @@ class NetworkAdapter(object):
             ])
             time.sleep(5)
         except SystemError:
-
+            print(traceback.print_exc())
+            print(traceback.format_exc())
             raise SystemError
 
     @property

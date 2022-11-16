@@ -6,7 +6,7 @@ import atexit
 
 
 def on_exit():
-    if 'runserver' or 'uwsgi' in sys.argv:
+    if 'runserver' in sys.argv or 'uwsgi' in sys.argv:
         # from wifiINFO.common import config as configer
         from wifiINFO.common import settings as configer
 

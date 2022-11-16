@@ -45,6 +45,8 @@ class MonitorManager(object):
                 LOG,
             ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except IOError:
+            print(traceback.print_exc())
+            print(traceback.format_exc())
             return False
 
     def airodump(self):
@@ -72,23 +74,34 @@ class MonitorManager(object):
 
     def start(self):
         config = self.config
-        LOG = config.get('LOG')
+        LOG = self.LOG
         self.init_log()
 
-        process = self.airodump()  # 启动airodump主进程
-        self.process = process
+        try:
+            process = self.airodump()  # 启动airodump主进程
+        except RuntimeError:
+            print(traceback.print_exc())
+            print(traceback.format_exc())
+            raise RuntimeError
 
-        for count in range(0, 6):
+        for count in range(0, 3):
             time.sleep(10)  # 启动等待
             if os.path.exists(LOG) and os.stat(LOG).st_size > 200:
-                config.set(
-                    MAIN_STATUS=True,
-                    MAIN_PID=process.pid
-                )
-                return process.pid
+                try:
+                    config.set(
+                        MAIN_STATUS=True,
+                        MAIN_PID=process.pid
+                    )
+                    return process.pid
+                except RuntimeError:
+                    print(traceback.print_exc())
+                    print(traceback.format_exc())
+                    raise RuntimeError
             else:
+                print('Airodump start failed')
                 self.stop()
                 self.init_log()
+
                 raise TimeoutError
 
         raise SystemError
@@ -100,4 +113,6 @@ class MonitorManager(object):
                 os.kill(pid, signal.SIGKILL)
                 return True
             except SystemError:
+                print(traceback.print_exc())
+                print(traceback.format_exc())
                 return False

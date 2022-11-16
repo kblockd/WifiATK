@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="5206d67e-002e-49ef-86c4-d0e6d53fc544" name="dep121">
+        <fileTransfer rootFolder="/opt/Wifi/" accessType="SFTP" host="192.168.31.121" port="22" sshConfigId="b9e9a7e9-e170-44dc-b3ad-ffc6b9d1205c" sshConfig="ssh121" />
+      </webServer>
+    </option>
+  </component>
+</project>

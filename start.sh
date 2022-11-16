@@ -154,9 +154,8 @@ sstart(){
 	virtual="$cwd/venv/bin"
 		cat > /etc/systemd/system/uwsgi.service << EOF
 [Unit]
-[Unit]
 Description=uwsgi
-After=network.target
+After=mysqld.target
 
 [Service]
 Type=forking
@@ -174,6 +173,7 @@ ExecStop=/usr/bin/uwsgi --stop /var/run/uwsgi.pid
 
 [Install]
 WantedBy=multi-user.target
+
 EOF
 
   sudo systemctl daemon-reload

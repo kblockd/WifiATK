@@ -16,7 +16,8 @@ class ConfigManager(object):
 
         self._LOGNAME = loganme
 
-        self._LOGDIR = os.getcwd()
+        # self._LOGDIR = os.getcwd()
+        self._LOGDIR = '/opt/Wifi/WifiATK'  # 此处bug较多，先硬编码
 
         try:
             self._LOG = "{}/{}-01.csv".format(self._LOGDIR, self._LOGNAME)
@@ -40,6 +41,8 @@ class ConfigManager(object):
 
     def initialize(self):
         if self.get('MAIN_STATUS') is True:
+            self._MAIN_STATUS = self.get('MAIN_STATUS')
+            self._ATK_STATUS = self.get('ATK_STATUS')
             self._MONFACE = self.get('MONFACE')
             self._ATKFACE = self.get('ATKFACE')
             self._HOSTFACE = self.get('HOSTFACE')

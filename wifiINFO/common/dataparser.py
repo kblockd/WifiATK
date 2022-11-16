@@ -15,8 +15,8 @@ logger = logging.getLogger("wifiINFO.dataparser")
 
 class Dataparser(object):
     def __init__(self):
-        self.config = configer.ConfigManager().initialize()
-        if not self.config.get('MAIN_STATUS'):
+        self.config = configer.ConfigManager()
+        if self.config.get('MAIN_STATUS') is False:
             print('NO_MAIN_STATUS')
             raise False
 
@@ -32,6 +32,7 @@ class Dataparser(object):
         
         self.data_wifi(wifi_data)
         self.data_station(station_data)
+        self.cron_activelog()
 
     def file_parse(self):  # 文件解析
         inputfile = self.config.get('LOG')  # 输入源文件

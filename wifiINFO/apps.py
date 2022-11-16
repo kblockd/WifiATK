@@ -4,6 +4,7 @@ from django.apps import AppConfig
 from django.utils.module_loading import autodiscover_modules
 from django.db.models.signals import post_migrate
 import os
+import time
 import sys
 
 
@@ -36,4 +37,6 @@ class WifiinfoConfig(AppConfig):
 
         """规避其他功能执行"""
         if 'runserver' in sys.argv or 'uwsgi' in sys.argv:
+            print('Runserver!')
+            time.sleep(10)
             autodiscover_modules('start.py')

@@ -34,10 +34,10 @@ class MonitorManager(object):
         self.process = None
         self.pid = None
         self.config = configer.ConfigManager().initialize()
+        self.LOG = self.config.get('LOG')
 
     def init_log(self):
-        config = self.config
-        LOG = config.log
+        LOG = self.LOG
 
         try:
             subprocess.Popen([

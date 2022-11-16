@@ -2,11 +2,9 @@ from wifiINFO.common import monitor, attacker
 from wifiINFO.common import settings as configer
 
 
-
 class WifiATKEngine(object):
     def __init__(self):
-        self.config = configer.ConfigManager()
-        self.config.initialize()
+        self.config = configer.ConfigManager().initialize()
 
         self.monitor = monitor.MonitorManager()
         self.attack = None
@@ -38,4 +36,3 @@ def cron_atk():
     from wifiINFO.common import attacker
 
     attacker.AttackManager().cron_atk()
-

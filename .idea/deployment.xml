@@ -8,6 +8,9 @@
           <mappings>
             <mapping deploy="/WifiATK" local="$PROJECT_DIR$" web="/" />
           </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/venv" />
+          </excludedPaths>
         </serverdata>
       </paths>
       <paths name="root@192.168.31.139:22 password">

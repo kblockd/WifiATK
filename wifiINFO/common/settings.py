@@ -10,7 +10,6 @@ from wifiINFO.common.interfaces import NetworkAdapter
 logger = logging.getLogger("wifiINFO.config")
 
 
-
 class ConfigManager(object):
 
     def __init__(self, loganme='TEST123'):
@@ -40,7 +39,7 @@ class ConfigManager(object):
         self._ATK_STATUS = False
 
     def initialize(self):
-        if self.get('MAIN_STATUS'):
+        if self.get('MAIN_STATUS') is True:
             self._MONFACE = self.get('MONFACE')
             self._ATKFACE = self.get('ATKFACE')
             self._HOSTFACE = self.get('HOSTFACE')
@@ -50,7 +49,6 @@ class ConfigManager(object):
             self._ATK_PID = self.get('ATK_PID')
             self._HOST_PID = self.get('HOST_PID')
             self._DNSMASQ_PID = self.get('DNSMASQ_PID')
-
 
         inters_count = len(self._interfaces)
 
@@ -74,6 +72,7 @@ class ConfigManager(object):
             HOSTFACE_NAME = self._HOSTFACE.name
         else:
             raise EOFError
+
         try:
             self.set(
                 MAIN_STATUS=self._MAIN_STATUS,
@@ -187,7 +186,3 @@ class ConfigManager(object):
     @property
     def interfaces(self):
         return self._interfaces
-
-    @property
-    def log(self):
-        return self._LOG

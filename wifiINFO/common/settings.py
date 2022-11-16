@@ -40,7 +40,7 @@ class ConfigManager(object):
         self._ATK_STATUS = False
 
     def initialize(self):
-        if self.get('MAIN_STAUTS'):
+        if self.get('MAIN_STATUS'):
             self._MONFACE = self.get('MONFACE')
             self._ATKFACE = self.get('ATKFACE')
             self._HOSTFACE = self.get('HOSTFACE')
@@ -90,7 +90,7 @@ class ConfigManager(object):
                 HOST_PID=self._HOST_PID,
                 DNSMASQ_PID=self._DNSMASQ_PID,
             )
-            return True
+            return self
         except KeyError:
             return False
 

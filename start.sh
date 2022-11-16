@@ -155,7 +155,8 @@ sstart(){
 		cat > /etc/systemd/system/uwsgi.service << EOF
 [Unit]
 Description=uwsgi
-After=mysqld.target
+After=mysqld.service
+Requires=mysqld.service
 
 [Service]
 Type=forking

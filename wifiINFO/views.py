@@ -25,7 +25,7 @@ class Index_api(View):
             for active in Activelog.objects.all().values('client'):
                 client = active["client"]
                 if client is not None:
-                    active_clients.append(client.split(','))
+                    active_clients.extend(client.split(','))
             active_clients = len(active_clients)
             wifi_logs = Wifilog.objects.count()
             station_logs = Stationlog.objects.count()
@@ -58,7 +58,7 @@ class Index_api(View):
                 client = active["client"]
                 if client is not None:
                     active_clients = active_clients.append(client.split(','))
-            active_clients = active_clients.count()
+            active_clients = len(active_clients)
             wifi_logs = Wifilog.objects.count()
             station_logs = Stationlog.objects.count()
 

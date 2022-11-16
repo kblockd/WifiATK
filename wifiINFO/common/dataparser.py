@@ -34,7 +34,7 @@ class Dataparser(object):
         self.data_station(station_data)
 
     def file_parse(self):  # 文件解析
-        inputfile = self.config.log  # 输入源文件
+        inputfile = self.config.get('LOG')  # 输入源文件
 
         try:
             fp = open(inputfile, 'r')

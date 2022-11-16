@@ -10,11 +10,13 @@ from wifiINFO.common.interfaces import NetworkAdapter
 logger = logging.getLogger("wifiINFO.config")
 
 
+
 class ConfigManager(object):
 
     def __init__(self, loganme='TEST123'):
 
         self._LOGNAME = loganme
+
         self._LOGDIR = os.getcwd()
 
         try:
@@ -38,6 +40,18 @@ class ConfigManager(object):
         self._ATK_STATUS = False
 
     def initialize(self):
+        if self.get('MAIN_STAUTS'):
+            self._MONFACE = self.get('MONFACE')
+            self._ATKFACE = self.get('ATKFACE')
+            self._HOSTFACE = self.get('HOSTFACE')
+            self._LOG = self.get('LOG')
+            self._MAIN_PID = self.get('MAIN_PID')
+            self._ATK_BSSID = self.get('ATK_BSSID')
+            self._ATK_PID = self.get('ATK_PID')
+            self._HOST_PID = self.get('HOST_PID')
+            self._DNSMASQ_PID = self.get('DNSMASQ_PID')
+
+
         inters_count = len(self._interfaces)
 
         if inters_count == 1:

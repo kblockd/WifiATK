@@ -33,7 +33,7 @@ class MonitorManager(object):
     def __init__(self):
         self.process = None
         self.pid = None
-        self.config = configer.ConfigManager()
+        self.config = configer.ConfigManager().initialize()
 
     def init_log(self):
         config = self.config

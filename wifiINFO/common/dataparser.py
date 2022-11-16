@@ -15,9 +15,10 @@ logger = logging.getLogger("wifiINFO.dataparser")
 
 class Dataparser(object):
     def __init__(self):
-        self.config = configer.ConfigManager()
+        self.config = configer.ConfigManager().initialize()
         if not self.config.get('MAIN_STATUS'):
             print('NO_MAIN_STATUS')
+            return False
 
         try:
             self._wifi_data, self._station_data = self.file_parse()

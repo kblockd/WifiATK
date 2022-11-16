@@ -48,10 +48,10 @@ class AttackManager(Dataparser):
         return process
 
     def cron_atk(self):
-        if not self.config.get('MAIN_STATUS'):
+        if self.config.get('MAIN_STATUS') is False:
             return False
 
-        if not self.config.get('ATK_STATUS'):
+        if self.config.get('ATK_STATUS') is False:
             return False
 
         target = self.random_target()

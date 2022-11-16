@@ -78,7 +78,7 @@ class MonitorManager(object):
         process = self.airodump()  # 启动airodump主进程
         self.process = process
 
-        for count in range(0, 3):
+        for count in range(0, 6):
             time.sleep(10)  # 启动等待
             if os.path.exists(LOG) and os.stat(LOG).st_size > 200:
                 config.set(

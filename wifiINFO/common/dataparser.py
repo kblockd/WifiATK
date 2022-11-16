@@ -245,7 +245,8 @@ class Dataparser(object):
 
     def cron_activelog(self):
         config = self.config
-        if not config.get('MAIN_STATUS'):
+        if config.get('MAIN_STATUS') is False:
+            print("Main process doesn't start")
             return
 
         wifi_data = self._wifi_data
@@ -311,7 +312,7 @@ class Dataparser(object):
 
     def cron_data(self):
         config = self.config
-        if not config.get('MAIN_STATUS'):
+        if config.get('MAIN_STATUS') is False:
             return False
 
         try:

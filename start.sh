@@ -121,7 +121,23 @@ init_database(){
 	sudo sed -i  's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 	sudo systemctl enable mysql
 	sudo systemctl start mysql
+
+	sqlpass=$(echo $RANDOM | md5sum | head -c 20)
+
+	cat > ./start.sql <<EOF
+CREATE DATABASE Wifi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+CREATE USER 'wifi'@'localhost' IDENTIFIED BY '$sqlpass';
+# CREATE USER 'wifi'@'%' IDENTIFIED BY '$sqlpass';
+
+GRANT ALL ON Wifi.* TO 'wifi'@'localhost';
+GRANT ALL ON Wifi.* TO 'wifi'@'%';
+EOF
+  sudo sed -i 's/DEFAULT_PASSWORD/$sqlpass/' WifiATK/settings.py
+
+
 	sudo mysql -u root < start.sql
+	sudo rm start.sql
 
 	sudo $virtual/python3 manage.py makemigrations
 	sudo $virtual/python3 manage.py migrate

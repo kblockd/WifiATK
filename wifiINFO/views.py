@@ -18,7 +18,7 @@ config = configer.ConfigManager()
 importlib.reload(sys)
 
 
-class Index_api(View):
+class Indexapi(View):
     @staticmethod
     def get(request):
         try:
@@ -81,7 +81,7 @@ class Index_api(View):
 
             return JsonResponse(data, safe=False)
 
-        except Exception as e:
+        except RuntimeError:
             print('\n', '>>>' * 20)
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
@@ -89,8 +89,9 @@ class Index_api(View):
             return False
 
 
-class Active_api(View):
-    def get(self, request):
+class Activeapi(View):
+    @staticmethod
+    def get(request):
         try:
             model = Activelog.objects.all().order_by(
                 F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
@@ -98,104 +99,81 @@ class Active_api(View):
             data = dict()
             data["data"] = list(model)
             return JsonResponse(data, safe=False)
-        except:
+        except RuntimeError:
             return False
 
-    def post(self, request):
-        try:
-            model = Activelog.objects.all().order_by(
-                F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
+    # def post(self, request):
+    #     try:
+    #         model = Activelog.objects.all().order_by(
+    #             F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
+    #
+    #         data = dict()
+    #         data["data"] = list(model)
+    #         return JsonResponse(data, safe=False)
+    #     except RuntimeError:
+    #         return False
 
-            data = dict()
-            data["data"] = list(model)
-            return JsonResponse(data, safe=False)
-        except:
-            return False
 
-
-class Wifi_api(View):
-    def get(self, request):
+class Wifiapi(View):
+    @staticmethod
+    def get(request):
         try:
             model = Wifilog.objects.all().order_by('bssid').values()
 
             data = dict()
             data["data"] = list(model)
             return JsonResponse(data, safe=False)
-        except:
+        except RuntimeError:
             return False
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         try:
             model = Wifilog.objects.all().order_by('bssid').values()
             data = dict()
             data["data"] = list(model)
             return JsonResponse(data, safe=False)
-        except:
+        except RuntimeError:
             return False
 
 
-class Station_api(View):
-    def get(self, request):
+class Stationapi(View):
+    @staticmethod
+    def get(request):
         try:
             model = Stationlog.objects.all().order_by('client').values()
 
             data = dict()
             data["data"] = list(model)
             return JsonResponse(data, safe=False)
-        except:
+        except RuntimeError:
             return False
 
-    def post(self, request):
-        try:
-            model = Stationlog.objects.all().order_by('client').values()
-            data = dict()
-            data["data"] = list(model)
-            return JsonResponse(data, safe=False)
-        except:
-            return False
+    # def post(self, request):
+    #     try:
+    #         model = Stationlog.objects.all().order_by('client').values()
+    #         data = dict()
+    #         data["data"] = list(model)
+    #         return JsonResponse(data, safe=False)
+    #     except RuntimeError:
+    #         return False
 
 
-def attack(request, wifi_bssid):
-    if 'start' in request.path_info:
-        try:
-            target = Activelog.objects.get(bssid=wifi_bssid)
-            pid = attacker.AttackManager().deauth(target.bssid, target.channel).pid
-
-            data = dict()
-            data["data"] = {"success": 1, "pid": pid}
-
-            return JsonResponse(data, safe=False)
-
-        except:
-            data = dict()
-            data["data"] = {"success": 0}
-            return JsonResponse(data, safe=False)
-
-    if 'stop' in request.path_info:
-        try:
-            pid = config.get('ATK_PID')
-            os.kill(pid,signal.SIGKILL)
-
-            data = dict()
-            data["data"] = {"success": 1}
-            return JsonResponse(data, safe=False)
-        except:
-            data = dict()
-            data["data"] = {"success": 0}
-            return JsonResponse(data, safe=False)
-
-
-class Config_api(View):
-    def success(self):
+class Configapi(View):
+    @staticmethod
+    def success():
         data = dict()
         data["data"] = {"success": 1}
         return JsonResponse(data, safe=False)
 
-    def error(self):
+    @staticmethod
+    def error():
         data = dict()
         data["data"] = {"success": 0}
         return JsonResponse(data, safe=False)
-    def get(self, request):
+
+    @staticmethod
+    def get(request):
         model = Settings.objects.all()
         data_s = dict()
         for temp in model:
@@ -217,14 +195,14 @@ class Config_api(View):
                         monitor.MonitorManager().stop()
                         config.set(MAIN_STATUS=value)  # 关闭
                         return self.success()
-                    except:
+                    except RuntimeError:
                         return self.error()
                 else:
                     try:
                         monitor.MonitorManager().start()
                         config.set(MAIN_STATUS=value)  # 打开
                         return self.success()
-                    except:
+                    except RuntimeError:
                         return self.error()
 
             elif action == 'ATK_STATUS':
@@ -236,9 +214,39 @@ class Config_api(View):
             else:
                 config.set(**{key: value})
                 return self.success()
-        except:
+        except ValueError:
             return self.error()
 
 
-def UI(request):
+def webui(request):
     return render(request, 'dist/index.html')
+
+
+def attack(request, wifi_bssid):
+    if 'start' in request.path_info:
+        try:
+            target = Activelog.objects.get(bssid=wifi_bssid)
+            pid = attacker.AttackManager().deauth(target.bssid, target.channel).pid
+
+            data = dict()
+            data["data"] = {"success": 1, "pid": pid}
+
+            return JsonResponse(data, safe=False)
+
+        except RuntimeError:
+            data = dict()
+            data["data"] = {"success": 0}
+            return JsonResponse(data, safe=False)
+
+    if 'stop' in request.path_info:
+        try:
+            pid = config.get('ATK_PID')
+            os.kill(pid, signal.SIGKILL)
+
+            data = dict()
+            data["data"] = {"success": 1}
+            return JsonResponse(data, safe=False)
+        except RuntimeError:
+            data = dict()
+            data["data"] = {"success": 0}
+            return JsonResponse(data, safe=False)

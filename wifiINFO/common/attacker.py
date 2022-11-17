@@ -84,10 +84,6 @@ class AttackManager(Dataparser):
             return False
         return target
 
-    # @property
-    # def config(self):
-    #     return self.config
-
     @property
     def wifi_data(self):
         return self.wifi_data

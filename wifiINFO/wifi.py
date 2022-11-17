@@ -18,7 +18,7 @@ class WifiATKEngine(object):
 
     def start(self):
         self.monitor.start()
-        self.attack = attacker.AttackManager()
+        # self.attack = attacker.AttackManager()
 
     def start_attack(self):
         self.attack.start()

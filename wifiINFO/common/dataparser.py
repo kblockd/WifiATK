@@ -29,13 +29,13 @@ class Dataparser(object):
             self.config.on_exit()
             raise IOError
 
-    def first_start(self):
-        wifi_data = self._wifi_data
-        station_data = self._station_data
-        
-        self.data_wifi(wifi_data)
-        self.data_station(station_data)
-        self.cron_activelog()
+    # def first_start(self):
+    #     wifi_data = self._wifi_data
+    #     station_data = self._station_data
+    #
+    #     self.data_wifi(wifi_data)
+    #     self.data_station(station_data)
+    #     self.cron_activelog()
 
     def file_parse(self):  # 文件解析
         inputfile = self.config.get('LOG')  # 输入源文件

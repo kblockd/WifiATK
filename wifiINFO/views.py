@@ -232,13 +232,15 @@ def attack(request, wifi_bssid):
             data["data"] = {"success": 1, "pid": pid}
 
             return JsonResponse(data, safe=False)
-
         except RuntimeError:
+            print(traceback.print_exc())
+            print(traceback.format_exc())
+
             data = dict()
             data["data"] = {"success": 0}
             return JsonResponse(data, safe=False)
 
-    if 'stop' in request.path_info:
+    elif 'stop' in request.path_info:
         try:
             pid = config.get('ATK_PID')
             os.kill(pid, signal.SIGKILL)
@@ -247,6 +249,9 @@ def attack(request, wifi_bssid):
             data["data"] = {"success": 1}
             return JsonResponse(data, safe=False)
         except RuntimeError:
+            print(traceback.print_exc())
+            print(traceback.format_exc())
+
             data = dict()
             data["data"] = {"success": 0}
             return JsonResponse(data, safe=False)

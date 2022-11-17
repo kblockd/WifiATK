@@ -14,11 +14,11 @@ urlpatterns = [
     path('api/wifi/', views.Wifiapi.as_view(), name='wifi'),
     path('api/station/', views.Stationapi.as_view(), name='station'),
 
-    path('api/attack/start/<wifi_bssid>/', views.attack, name='attack_start'),
-    path('api/attack/stop/<wifi_bssid>/', views.attack, name='attack_stop'),
+    path('api/attack/start/<str:wifi_bssid>/', views.attack, name='attack_start'),
+    path('api/attack/stop/<str:wifi_bssid>/', views.attack, name='attack_stop'),
 
     path('api/config/get/', views.Configapi.as_view(), name='config_get'),
-    path('api/config/set/<key>/<value>', views.Configapi.set, name='config_set'),
+    path('api/config/set/<str:key>/<str:value>', views.Configapi.set, name='config_set'),
 
     # path('activelog/',views.Active_api.as_view()),
     # path('host/start/<int:wifi_id>/', views.host_atk, name='host'),

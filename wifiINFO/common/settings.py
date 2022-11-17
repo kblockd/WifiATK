@@ -1,4 +1,6 @@
-import os
+# -*- coding: utf-8 -*-
+import importlib
+import sys
 import re
 import logging
 import pyric.pyw
@@ -8,6 +10,7 @@ from wifiINFO.models import Settings
 from wifiINFO.common.interfaces import NetworkAdapter
 
 logger = logging.getLogger("wifiINFO.config")
+importlib.reload(sys)
 
 
 class ConfigManager(object):

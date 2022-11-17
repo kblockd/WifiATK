@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+import importlib
+import sys
 import time
 import traceback
 import subprocess
@@ -8,6 +11,7 @@ from wifiINFO.models import Activelog
 from wifiINFO.common.dataparser import Dataparser
 
 logger = logging.getLogger("wifiINFO.attack")
+importlib.reload(sys)
 
 
 class AttackManager(Dataparser):

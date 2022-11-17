@@ -1,6 +1,7 @@
 # -*- coding: utf-8
+import sys
+import importlib
 import os
-import re
 import signal
 import traceback
 
@@ -14,6 +15,7 @@ from wifiINFO.common import settings as configer
 from wifiINFO.models import Wifilog, Stationlog, Activelog, Settings
 
 config = configer.ConfigManager()
+importlib.reload(sys)
 
 
 class Index_api(View):

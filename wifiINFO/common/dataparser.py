@@ -1,16 +1,19 @@
+# -*- coding: utf-8 -*-
 import re
+import sys
 import logging
 import traceback
 import datetime
 import linecache
+import importlib
 
 from wifiINFO.common import utils
-# from wifiINFO.common import config as configer
 from wifiINFO.common import settings as configer
 
 from wifiINFO.models import Wifilog, Stationlog, Activelog
 
 logger = logging.getLogger("wifiINFO.dataparser")
+importlib.reload(sys)
 
 
 class Dataparser(object):

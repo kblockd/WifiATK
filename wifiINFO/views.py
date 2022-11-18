@@ -182,7 +182,8 @@ class Configapi(View):
         data["data"] = data_s
         return JsonResponse(data, safe=False)
 
-    def set(self, request, key, value):
+    def set(self, key, value):
+
         try:
             action = key
 
@@ -200,14 +201,33 @@ class Configapi(View):
                 else:
                     try:
                         monitor.MonitorManager().start()
+
+                        if value == 'true':
+                            value = True
+                        elif value == 'false':
+                            value = False
+                        else:
+                            raise ValueError
+
                         config.set(MAIN_STATUS=value)  # 打开
                         return self.success()
                     except RuntimeError:
                         return self.error()
 
             elif action == 'ATK_STATUS':
+
+                if value == 'true':
+                    value = True
+                elif value == 'false':
+                    value = False
+                else:
+                    raise ValueError
                 config.set(ATK_STATUS=value)
-                return self.success()
+
+                data = dict()
+                data["data"] = {"success": 1}
+                return JsonResponse(data, safe=False)
+
             elif action == 'LOGNAME':
                 config.set(LOGNAME=value)
                 return self.success()

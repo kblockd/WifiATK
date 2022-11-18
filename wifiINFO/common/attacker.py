@@ -19,11 +19,10 @@ importlib.reload(sys)
 class AttackManager(object):
     def __init__(self):
         self.config = configer.ConfigManager()
-        self.ATKFACE = None
+        self.ATKFACE = self.config.get('ATKFACE')
 
     def start_cron(self):
         self.config.set(ATK_STATUS=True)
-        self.ATKFACE = self.config.get('ATKFACE')
 
     def stop_cron(self):
         self.config.set(ATK_STATUS=False)
@@ -51,17 +50,16 @@ class AttackManager(object):
                 "-s",
                 "20",
                 "-c",
-                channel,
+                str(channel),
                 "-B",
                 bssid
-            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=False)
 
             self.config.set(ATK_PID=process.pid)
             return process
 
-        except Exception as e:
-            print(e)
-            return False
+        except RuntimeError:
+            raise RuntimeError
 
     def cron_atk(self):
         if self.config.get('MAIN_STATUS') is False:

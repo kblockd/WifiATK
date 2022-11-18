@@ -58,7 +58,7 @@ EOF
 init_soft(){
 	sudo apt update && apt upgrade -y
 	sudo apt install git vim nginx mariadb-server uwsgi uwsgi-plugin-python3 python3 python3-pip tmux aircrack-ng -y
-	sudo apt install dnsmasq hostapd bc build-essential dkms  -y
+	sudo apt install dnsmasq hostapd bc build-essential dkms mdk4  -y
 	sudo apt install libnl-3-dev libnl-genl-3-dev libssl-dev -y
 	sudo pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 	sudo pip3 install virtualenv

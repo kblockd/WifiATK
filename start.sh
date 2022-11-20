@@ -34,7 +34,7 @@ wpa-psk $wifipass"
     eval "$temp"
 
     sudo systemctl disable avahi-daemon
-	  sudo systemctl disable dhcpd
+	  sudo systemctl disable dhcpcd
 	  sudo systemctl disable wpa_supplicant
 	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
@@ -81,8 +81,12 @@ EOF
 
 	fi
 
-	sudo systemctl enable networking
+  sudo systemctl enable networking
+  sudo systemctl stop avahi-daemon
+	sudo systemctl stop dhcpcd
+	sudo systemctl stop wpa_supplicant
 	sudo systemctl restart networking
+	sudo echo "nameserver 114.114.114.114" >> /etc/resolv.conf
 }
 
 ##############
@@ -90,6 +94,17 @@ EOF
 ##############
 init_soft(){
   cd /opt/Wifi/
+  cat > /etc/apt/sources.list << EOF
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib non-free
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib non-free
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free
+
+EOF
 	sudo apt install git vim nginx mariadb-server uwsgi uwsgi-plugin-python3 python3 python3-pip tmux  -y
 	sudo apt install dnsmasq hostapd bc build-essential dkms mdk4 aircrack-ng -y
 	sudo apt install libnl-3-dev libnl-genl-3-dev libssl-dev postfix -y

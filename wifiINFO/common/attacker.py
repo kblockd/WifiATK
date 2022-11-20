@@ -27,19 +27,6 @@ class AttackManager(object):
     def stop_cron(self):
         self.config.set(ATK_STATUS=False)
 
-    # def stop(self):
-    #     try:
-    #         ATK_PID = self.config.get('ATK_PID')
-    #
-    #         os.kill(ATK_PID, signal.SIGKILL)
-    #
-    #         self.config.set(ATK_PID=None)
-    #     except RuntimeError:
-    #         print('\n', '>>>' * 20)
-    #         print(traceback.print_exc())
-    #         print('\n', '>>>' * 20)
-    #         print(traceback.format_exc())
-
     def deauth(self, bssid, channel):
         # Deauth
         try:
@@ -60,11 +47,23 @@ class AttackManager(object):
         except RuntimeError:
             return False
 
+    def attack(self, bssid):
+        try:
+            target = Activelog.objects.get(bssid=bssid)
+        except KeyError:
+            return False
+
+        if self.config.get('ATK_PID') is not None:
+            return False
+
+        pid = self.deauth(target.bssid, target.channel).pid
+        return pid
+
     def kill(self):
         try:
-            pid = self.config.get('pid')
+            pid = self.config.get('ATK_PID')
             os.kill(pid, signal.SIGKILL)
-            self.config.set(pid=None)
+            self.config.set(ATK_PID=None, ATK_BSSID=None)
             return True
         except ValueError:
             print('No pid found!')

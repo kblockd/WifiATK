@@ -239,14 +239,14 @@ def webui(request):
 
 
 def attack(request, wifi_bssid):
+    atkman = attacker.AttackManager()
     if 'start' in request.path_info:
         try:
 
             if config.get('ATK_PID') is not None:
                 return error()
 
-            target = Activelog.objects.get(bssid=wifi_bssid)
-            pid = attacker.AttackManager().deauth(target.bssid, target.channel).pid
+            pid = atkman.attack(wifi_bssid)
 
             return success(pid=pid)
 
@@ -258,9 +258,7 @@ def attack(request, wifi_bssid):
 
     elif 'stop' in request.path_info:
         try:
-            pid = config.get('ATK_PID')
-            os.kill(pid, signal.SIGKILL)
-
+            atkman.kill()
             return success()
         except RuntimeError:
             print(traceback.print_exc())

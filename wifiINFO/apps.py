@@ -15,10 +15,10 @@ def init_data(sender, **kwargs):
         conf_list = {
             "MAIN_STATUS": False,
             "ATK_STATUS": False,
-            "MONFACE": None,
             "LOGDIR": None,
             "LOGNAME": None,
             "LOG": None,
+            "MONFACE": None,
             "ATKFACE": None,
             "HOSTFACE": None,
             "MAIN_PID": None,

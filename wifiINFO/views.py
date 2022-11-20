@@ -216,21 +216,21 @@ class Configapi(View):
             elif action == 'ATK_STATUS':
 
                 if value == 'true':
-                    value = True
+                    config.set(ATK_STATUS=True, ATK_PID=None, ATK_BSSID=None)
+                    # attacker.AttackManager.start_cron()
+
                 elif value == 'false':
-                    value = False
+                    pid = config.get('ATK_PID')
+                    if pid is not None:
+                        try:
+                            os.kill(pid, signal.SIGKILL)
+                            config.set(ATK_STATUS=False, ATK_PID=None, ATK_BSSID=None)
+                        except KeyError:
+                            return error()
+                    return success()
+
                 else:
-                    raise ValueError
-
-                pid = config.get('ATK_PID')
-                if pid is not None:
-                    try:
-                        os.kill(pid, signal.SIGKILL)
-                        config.set(ATK_STATUS=value, ATK_PID=None,ATK_BSSID=None)
-                    except KeyError:
-                        return error()
-
-                return success()
+                    return error()
 
             elif action == 'LOGNAME':
                 config.set(LOGNAME=value)

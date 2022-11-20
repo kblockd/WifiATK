@@ -1,5 +1,4 @@
 # -*- coding: utf-8
-# import django.apps
 import datetime
 
 from django.apps import AppConfig
@@ -13,14 +12,26 @@ import sys
 def init_data(sender, **kwargs):
     from wifiINFO.models import Settings
     if Settings.objects.count() == 0:
-        conf_list = {"MONFACE": None, "ATKFACE": None, "HOSTFACE": None, "MAIN_PID": None,
-                     "LOGDIR": None, "LOGNAME": None, "LOG": None,"ATK_PID": None,
-                     "HOST_PID": None, "DNSMASQ_PID": None, "MAIN_STATUS": False, "ATK_STATUS": False,
-                     }
+        conf_list = {
+            "MAIN_STATUS": False,
+            "ATK_STATUS": False,
+            "MONFACE": None,
+            "LOGDIR": None,
+            "LOGNAME": None,
+            "LOG": None,
+            "ATKFACE": None,
+            "HOSTFACE": None,
+            "MAIN_PID": None,
+            "ATK_PID": None,
+            "HOST_PID": None,
+            "DNSMASQ_PID": None,
+            "ATK_BSSID": None,
+        }
 
+        create_list = []
         for key in conf_list.keys():
             value = conf_list[key]
-            Settings.objects.filter(key=key).update(value=value)
+            Settings.objects.filter(key=key).update_or_create(key=key, value=value)
 
 
 class WifiinfoConfig(AppConfig):

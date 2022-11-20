@@ -12,20 +12,31 @@ init_network(){
 	sudo systemctl stop NetworkManager
 	sudo systemctl disable NetworkManager
 
-	cat > /etc/wpa_supplicant/wpa_supplicant.conf <<EOF  #修改管理用Wi-Fi和密码
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-country=CN
+	sudo systemctl disable avahi-daemon
+	sudo systemctl disable dhcpd
+	sudo systemctl disable wpa_supplicant
 
-network={
-	ssid="Mwifi"
-	psk="TestWifi123."
-}
-EOF
+#	cat > /etc/wpa_supplicant/wpa_supplicant.conf <<EOF  #修改管理用Wi-Fi和密码
+#ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+#update_config=1
+#country=CN
+#
+#network={
+#	ssid="Mwifi"
+#	psk="TestWifi123."
+#}
+#EOF
   sudo systemctl restart networking
 
 	temp=$(ip route show |grep default |grep wlan0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
 	eval $temp
+
+	if [ $(uname -a |awk '{print $2}') == "raspberrypi" ] ; then
+    wifi="
+wpa-essid magic
+wpa-psk zzx4667185
+"
+	fi
 
 	cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
@@ -45,6 +56,7 @@ iface wlan0 inet static
 address $ip
 netmask 255.255.255.0
 gateway $gateway
+$wifi
 EOF
 
 	sudo ip addr flush dev wlan0
@@ -139,6 +151,7 @@ EOF
 
 	sudo mysql -u root < start.sql
 	sudo rm start.sql
+	sudo systemctl restart mysql
 
 	sudo $virtual/python3 manage.py makemigrations
 	sudo $virtual/python3 manage.py migrate
@@ -150,7 +163,7 @@ EOF
 ##########
 sstart(){
 	cd /opt/Wifi/WifiATK/
-	cwd = `pwd`
+	cwd=`pwd`
 	virtual="$cwd/venv/bin"
 		cat > /etc/systemd/system/uwsgi.service << EOF
 [Unit]
@@ -180,8 +193,6 @@ EOF
   sudo systemctl daemon-reload
   sudo systemctl start uwsgi
   sudo systemctl enable uwsgi
-
-	sudo nohup $virtual/python3 manage.py runserver 0.0.0.0:8080 --noreload > /tmp/wifi.log 2>&1 &
 
 }
 ########

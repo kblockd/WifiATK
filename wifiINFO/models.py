@@ -18,24 +18,24 @@ class Settings(models.Model):
         db_table = 'settings'
 
 
-class Conf(models.Model):
-    MONFACE = models.CharField(db_column='MONFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    ATKFACE = models.CharField(db_column='ATKFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    HOSTFACE = models.CharField(db_column='HOSTFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    LOGDIR = models.CharField(db_column='LOGDIR', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    LOGNAME = models.CharField(db_column='LOGNAME', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    LOG = models.CharField(db_column='LOG', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    ATK_BSSID = models.CharField(db_column='ATK_BSSID', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    ATK_PID = models.IntegerField(db_column='ATK_PID', blank=True, null=True)  # Field name made lowercase.
-    HOST_PID = models.IntegerField(db_column='HOST_PID', blank=True, null=True)  # Field name made lowercase.
-    DNSMASQ_PID = models.IntegerField(db_column='DNSMASQ_PID', blank=True, null=True)  # Field name made lowercase.
-    MAIN_STATUS = models.BooleanField(db_column='MAIN_STATUS', blank=True, null=True)  # Field name made lowercase.
-    ATK_STATUS = models.BooleanField(db_column='ATK_STATUS', blank=True, null=True)  # Field name made lowercase.
-
-
-    class Meta:
-        managed = True
-        db_table = 'conf'
+# class Conf(models.Model):
+#     MONFACE = models.CharField(db_column='MONFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     ATKFACE = models.CharField(db_column='ATKFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     HOSTFACE = models.CharField(db_column='HOSTFACE', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     LOGDIR = models.CharField(db_column='LOGDIR', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     LOGNAME = models.CharField(db_column='LOGNAME', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     LOG = models.CharField(db_column='LOG', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     ATK_BSSID = models.CharField(db_column='ATK_BSSID', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     ATK_PID = models.IntegerField(db_column='ATK_PID', blank=True, null=True)  # Field name made lowercase.
+#     HOST_PID = models.IntegerField(db_column='HOST_PID', blank=True, null=True)  # Field name made lowercase.
+#     DNSMASQ_PID = models.IntegerField(db_column='DNSMASQ_PID', blank=True, null=True)  # Field name made lowercase.
+#     MAIN_STATUS = models.BooleanField(db_column='MAIN_STATUS', blank=True, null=True)  # Field name made lowercase.
+#     ATK_STATUS = models.BooleanField(db_column='ATK_STATUS', blank=True, null=True)  # Field name made lowercase.
+#
+#
+#     class Meta:
+#         managed = True
+#         db_table = 'conf'
 
 
 class Activelog(models.Model):
@@ -46,7 +46,7 @@ class Activelog(models.Model):
     privacy = models.CharField(db_column='Privacy', max_length=30, blank=True, null=True)  # Field name made lowercase.
     cipher = models.CharField(db_column='Cipher', max_length=30, blank=True, null=True)  # Field name made lowercase.
     authentication = models.CharField(db_column='Authentication', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    power = models.IntegerField(db_column='Power', max_length=11, blank=True, null=True)  # Field name made lowercase.
+    power = models.CharField(db_column='Power', max_length=11, blank=True, null=True)  # Field name made lowercase.
     ATK_STATUS = models.BooleanField(db_column='ATK_STATUS', blank=True, null=True)  # Field name made lowercase.
 
     @classmethod
@@ -79,7 +79,7 @@ class Wifilog(models.Model):
     privacy = models.CharField(db_column='Privacy', max_length=255, blank=True, null=True)  # Field name made lowercase.
     cipher = models.CharField(db_column='Cipher', max_length=255, blank=True, null=True)  # Field name made lowercase.
     authentication = models.CharField(db_column='Authentication', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    power = models.IntegerField(db_column='Power', max_length=11, blank=True, null=True)  # Field name made lowercase.
+    power = models.CharField(db_column='Power', max_length=11, blank=True, null=True)  # Field name made lowercase.
     first_time = models.DateTimeField(db_column='First_time')  # Field name made lowercase.
     last_time = models.DateTimeField(db_column='Last_time')  # Field name made lowercase.
 

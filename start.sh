@@ -186,20 +186,19 @@ init_database(){
 	sudo systemctl enable mysql
 	sudo systemctl start mysql
 
-	randompass=$(echo $RANDOM | md5sum | head -c 20)
+	#randompass=$(echo $RANDOM | md5sum | head -c 20)
 	sqlpass="WifiAttack123."
 
 	cat > ./start.sql <<EOF
 CREATE DATABASE Wifi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-CREATE USER 'wifi'@'localhost' IDENTIFIED BY '$randompass';
+CREATE USER 'wifi'@'localhost' IDENTIFIED BY 'sqlpass';
 CREATE USER 'wifi'@'%' IDENTIFIED BY '$sqlpass';
 
 GRANT ALL ON Wifi.* TO 'wifi'@'localhost';
 GRANT ALL ON Wifi.* TO 'wifi'@'%';
 EOF
-  sudo sed -i 's/DEFAULT_SQLPASS/$randompass/' WifiATK/settings.py
-
+  #sudo sed -i 's/DEFAULT_SQLPASS/$randompass/' WifiATK/settings.py
 
 	mysql -u root < start.sql
 	sudo rm start.sql

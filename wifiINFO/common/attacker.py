@@ -71,10 +71,10 @@ class AttackManager(object):
             return False
 
     def cron_atk(self):
-        if self.config.get('MAIN_STATUS') is False:
+        if self.config.get('MAIN_STATUS') == "False":
             return False
 
-        if self.config.get('ATK_STATUS') is False:
+        if self.config.get('ATK_STATUS') == "False":
             return False
 
         target = self.random_target()

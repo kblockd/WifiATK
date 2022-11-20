@@ -160,15 +160,6 @@ class Stationapi(View):
         except RuntimeError:
             return False
 
-    # def post(self, request):
-    #     try:
-    #         model = Stationlog.objects.all().order_by('client').values()
-    #         data = dict()
-    #         data["data"] = list(model)
-    #         return JsonResponse(data, safe=False)
-    #     except RuntimeError:
-    #         return False
-
 
 class Configapi(View):
 
@@ -217,6 +208,7 @@ class Configapi(View):
 
                 if value == 'true':
                     config.set(ATK_STATUS=True, ATK_PID=None, ATK_BSSID=None)
+                    return success()
                     # attacker.AttackManager.start_cron()
 
                 elif value == 'false':
@@ -224,9 +216,9 @@ class Configapi(View):
                     if pid is not None:
                         try:
                             os.kill(pid, signal.SIGKILL)
-                            config.set(ATK_STATUS=False, ATK_PID=None, ATK_BSSID=None)
                         except KeyError:
                             return error()
+                    config.set(ATK_STATUS=False, ATK_PID=None, ATK_BSSID=None)
                     return success()
 
                 else:
@@ -236,8 +228,8 @@ class Configapi(View):
                 config.set(LOGNAME=value)
                 return success()
             else:
-                config.set(**{key: value})
-                return success()
+                # config.set(**{key: value})
+                return error()
         except ValueError:
             return error()
 

@@ -19,7 +19,7 @@ importlib.reload(sys)
 class Dataparser(object):
     def __init__(self):
         self.config = configer.ConfigManager()
-        if self.config.get('MAIN_STATUS') is False:
+        if self.config.get('MAIN_STATUS') == "False":
             print('NO_MAIN_STATUS')
             raise False
 

@@ -69,15 +69,17 @@ EOF
 ##############
 init_soft(){
 	sudo apt update && apt upgrade -y
-	sudo apt install git vim nginx mariadb-server uwsgi uwsgi-plugin-python3 python3 python3-pip tmux aircrack-ng -y
-	sudo apt install dnsmasq hostapd bc build-essential dkms mdk4  -y
-	sudo apt install libnl-3-dev libnl-genl-3-dev libssl-dev -y
+	sudo apt install git vim nginx mariadb-server uwsgi uwsgi-plugin-python3 python3 python3-pip tmux  -y
+	sudo apt install dnsmasq hostapd bc build-essential dkms mdk4 aircrack-ng -y
+	sudo apt install libnl-3-dev libnl-genl-3-dev libssl-dev postfix -y
 	sudo pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 	sudo pip3 install virtualenv
 
 	sudo git clone https://ghproxy.com/https://github.com/wifiphisher/roguehostapd.git
 	cd roguehostapd
 	sudo sed -i "s/ext_modules/entry_points={\n\t\'console_scripts\': [\n\t\t\'roguehostapd = roguehostapd.run\'\n\t]},\n\text_modules/g" setup.py
+	sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+  sudo systemctl restart ssh
 	sudo python3 setup.py install
 	cd  ..
 }

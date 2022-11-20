@@ -25,8 +25,8 @@ init_network(){
 	fi
 
 	if [ "$plat" = "raspberrypi" ] ; then
-	  read -p "请输入Wi-Fi名称:" essid
-	  read -p "请输入Wi-Fi密码：" wifipass
+	  read -p "请输入默认连接的Wi-Fi名称:" essid
+	  read -p "请输入默认连接的Wi-Fi密码：" wifipass
     wifi="wpa-essid $essid
 wpa-psk $wifipass"
 

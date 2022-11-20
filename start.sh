@@ -59,7 +59,8 @@ netmask 255.255.255.0
 gateway $gateway
 $wifi
 EOF
-#    sudo ip addr flush dev wlan0
+
+    sudo ip addr flush dev wlan0
 
 	else  # X86
 	  temp=$(ip route show |grep default |grep eth0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
@@ -85,7 +86,8 @@ address $ip
 netmask 255.255.255.0
 gateway $gateway
 EOF
-#    sudo ip addr flush dev eth0
+
+    sudo ip addr flush dev eth0
 	fi
 
   sudo systemctl enable networking

@@ -37,8 +37,6 @@ wpa-psk $wifipass"
 	  sudo systemctl disable dhcpcd && systemctl stop dhcpcd
 	  sudo systemctl disable wpa_supplicant && systemctl stop wpa_supplicant
 
-	  sudo systemctl restart networking
-    sleep 10
 	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
@@ -53,10 +51,11 @@ auto eth0
 iface eth0 inet dhcp
 
 auto wlan0
-iface wlan0 inet static
-address $ip
-netmask 255.255.255.0
-gateway $gateway
+iface wlan0 inet dhcp
+#iface wlan0 inet static
+#address $ip
+#netmask 255.255.255.0
+#gateway $gateway
 $wifi
 EOF
 
@@ -70,6 +69,8 @@ EOF
 	  sudo systemctl disable avahi-daemon && systemctl stop avahi-daemon
 	  sudo systemctl disable dhcpcd && systemctl stop dhcpcd
 	  sudo systemctl disable wpa_supplicant && systemctl stop wpa_supplicant
+
+	  sudo systemctl restart networking
 
 	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
@@ -89,9 +90,11 @@ gateway $gateway
 EOF
 
     sudo ip addr flush dev eth0
-    sudo ifup --ignore-errors eth0
 
 	fi
+
+  sudo rm /etc/network/if-up.d/wpa_supplicant
+  sudo rm /etc/network/if-preup.d/wpa_supplicant
 
   sudo systemctl enable networking
 	sudo systemctl restart networking

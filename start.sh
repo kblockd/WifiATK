@@ -16,25 +16,17 @@ init_network(){
 	sudo systemctl disable dhcpd
 	sudo systemctl disable wpa_supplicant
 
-#	cat > /etc/wpa_supplicant/wpa_supplicant.conf <<EOF  #修改管理用Wi-Fi和密码
-#ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-#update_config=1
-#country=CN
-#
-#network={
-#	ssid="Mwifi"
-#	psk="TestWifi123."
-#}
-#EOF
   sudo systemctl restart networking
 
 	temp=$(ip route show |grep default |grep wlan0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
 	eval $temp
 
 	if [ $(uname -a |awk '{print $2}') == "raspberrypi" ] ; then
+	  read -p "输入Wi-Fi名称:" essid
+	  read -p "请输入Wi-Fi密码：" wifipass
     wifi="
-wpa-essid magic
-wpa-psk zzx4667185
+wpa-essid $essid
+wpa-psk $wifipass
 "
 	fi
 

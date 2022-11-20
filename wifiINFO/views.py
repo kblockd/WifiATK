@@ -208,8 +208,8 @@ class Configapi(View):
 
                 if value == 'true':
                     config.set(ATK_STATUS=True, ATK_PID=None, ATK_BSSID=None)
+                    attacker.AttackManager().start_cron()
                     return success()
-                    # attacker.AttackManager.start_cron()
 
                 elif value == 'false':
                     pid = config.get('ATK_PID')

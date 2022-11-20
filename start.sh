@@ -61,6 +61,7 @@ $wifi
 EOF
 
     sudo ip addr flush dev wlan0
+    sudo ifup --ignore-errors wlan0
 
 	else  # X86
 	  temp=$(ip route show |grep default |grep eth0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
@@ -88,6 +89,8 @@ gateway $gateway
 EOF
 
     sudo ip addr flush dev eth0
+    sudo ifup --ignore-errors eth0
+
 	fi
 
   sudo systemctl enable networking

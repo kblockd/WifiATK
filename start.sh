@@ -1,36 +1,42 @@
 #!/bin/bash
 
 set -e
-
 plat=$(uname -a |awk '{print $2}')
+networkflag=0
+
+if [[ $EUID -ne 0 ]]; then
+    echo "权限需要提升:该安装程序必须由root用户执行" 1>&2
+		exit 255
+fi
+
+if [ "$plat" != "kali" ] && [ "$plat" != "debian" ] && [ "$plat" != "ubuntu" ] && [ "$plat" != "raspberrypi" ];then
+  echo "Only Support Debian Family Platform!"
+  exit 255
+fi
+
 
 ##########
 #静态网络#
 ##########
 init_network(){
-
-	sudo systemctl stop NetworkManager
-	sudo systemctl disable NetworkManager
-
-	sudo systemctl disable avahi-daemon
-	sudo systemctl disable dhcpd
-	sudo systemctl disable wpa_supplicant
-
-  sudo systemctl restart networking
-
-	temp=$(ip route show |grep default |grep wlan0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
-	eval $temp
-
-	if [ $(uname -a |awk '{print $2}') == "raspberrypi" ] ; then
-	  read -p "输入Wi-Fi名称:" essid
-	  read -p "请输入Wi-Fi密码：" wifipass
-    wifi="
-wpa-essid $essid
-wpa-psk $wifipass
-"
+  if [ "$plat" = "kali" ] || [ "$plat" = "debian" ] || [ "$plat" = "ubuntu" ];then
+	  sudo systemctl stop NetworkManager
+	  sudo systemctl disable NetworkManager
 	fi
 
-	cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
+	if [ "$plat" = "raspberrypi" ] ; then
+	  read -p "请输入Wi-Fi名称:" essid
+	  read -p "请输入Wi-Fi密码：" wifipass
+    wifi="wpa-essid $essid
+wpa-psk $wifipass"
+
+    temp=$(ip route show |grep default |grep wlan0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
+    eval "$temp"
+
+    sudo systemctl disable avahi-daemon
+	  sudo systemctl disable dhcpd
+	  sudo systemctl disable wpa_supplicant
+	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
 
@@ -50,17 +56,41 @@ netmask 255.255.255.0
 gateway $gateway
 $wifi
 EOF
+    sudo ip addr flush dev eth0
 
-	sudo ip addr flush dev wlan0
+	else
+	  temp=$(ip route show |grep default |grep eth0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
+	  eval "$temp"
+	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+address $ip
+netmask 255.255.255.0
+gateway $gateway
+EOF
+    sudo ip addr flush dev wlan0
+
+	fi
+
 	sudo systemctl enable networking
 	sudo systemctl restart networking
+	sudo apt update && apt upgrade -y
 }
 
 ##############
 #安装基础软件#
 ##############
 init_soft(){
-	sudo apt update && apt upgrade -y
+  cd /opt/Wifi/
 	sudo apt install git vim nginx mariadb-server uwsgi uwsgi-plugin-python3 python3 python3-pip tmux  -y
 	sudo apt install dnsmasq hostapd bc build-essential dkms mdk4 aircrack-ng -y
 	sudo apt install libnl-3-dev libnl-genl-3-dev libssl-dev postfix -y
@@ -84,7 +114,8 @@ init_kernel() {
   sudo git clone https://ghproxy.com/https://github.com/cilynx/rtl88x2bu
 	cd rtl88x2bu
 
-  if [ "$plat" = "kali" -o "$plat" = "debian" -o "$plat" = "ubuntu" ] ; then
+  if [ "$plat" = "kali" ] || [ "$plat" = "debian" ] || [ "$plat" = "ubuntu" ] ; then
+	  # shellcheck disable=SC2046
 	  sudo apt install -y  linux-headers-$(uname -r) ####如果编译报错,可能是因为当前内核与编译库版本对不上，重启后重新执行脚本
 	elif [ "$plat" = "raspberrypi" ] ; then
 	  # Configure for RasPi
@@ -94,27 +125,27 @@ init_kernel() {
   fi
 
 	VER=$(sed -n 's/\PACKAGE_VERSION="\(.*\)"/\1/p' dkms.conf)
-	sudo rsync -rvhP ./ /usr/src/rtl88x2bu-${VER}
-	sudo dkms add -m rtl88x2bu -v ${VER}
-	sudo dkms build -m rtl88x2bu -v ${VER}
-	sudo dkms install -m rtl88x2bu -v ${VER}
+	sudo rsync -rvhP ./ /usr/src/rtl88x2bu-"${VER}"
+	sudo dkms add -m rtl88x2bu -v "${VER}"
+	sudo dkms build -m rtl88x2bu -v "${VER}"
+	sudo dkms install -m rtl88x2bu -v "${VER}"
 	sudo modprobe 88x2bu
-	cd ..
 }
 
 ##########
 #虚拟环境#
 ##########
 init_env(){
-
 	cd /opt/Wifi/
 	sudo git clone https://ghproxy.com/https://github.com/kblockd/WifiATK.git
 	cd WifiATK
 
 	sudo virtualenv venv
-	virtual="`pwd`/venv/bin"
-	sudo $virtual/pip3 install -r requirements.txt
+	virtual="$(pwd)/venv/bin"
+	sudo "$virtual"/pip3 install -r requirements.txt
 
+  echo "SHELL=/bin/bash" >> /var/spool/cron/crontabs/root
+  echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> /var/spool/cron/crontabs/root
 }
 
 ############
@@ -122,34 +153,34 @@ init_env(){
 ############
 init_database(){
 	cd /opt/Wifi/WifiATK/
-	virtual="`pwd`/venv/bin"
+	virtual="$(pwd)/venv/bin"
 
 	sudo sed -i  's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 	sudo systemctl enable mysql
 	sudo systemctl start mysql
 
-	# sqlpass=$(echo $RANDOM | md5sum | head -c 20)
+	randompass=$(echo $RANDOM | md5sum | head -c 20)
 	sqlpass="WifiAttack123."
 
 	cat > ./start.sql <<EOF
 CREATE DATABASE Wifi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-CREATE USER 'wifi'@'localhost' IDENTIFIED BY '$sqlpass';
+CREATE USER 'wifi'@'localhost' IDENTIFIED BY '$randompass';
 CREATE USER 'wifi'@'%' IDENTIFIED BY '$sqlpass';
 
 GRANT ALL ON Wifi.* TO 'wifi'@'localhost';
 GRANT ALL ON Wifi.* TO 'wifi'@'%';
 EOF
-  # sudo sed -i 's/DEFAULT_PASSWORD/$sqlpass/' WifiATK/settings.py
+  sudo sed -i 's/DEFAULT_SQLPASS/$randompass/' WifiATK/settings.py
 
 
-	sudo mysql -u root < start.sql
+	mysql -u root < start.sql
 	sudo rm start.sql
 	sudo systemctl restart mysql
 
-	sudo $virtual/python3 manage.py makemigrations
-	sudo $virtual/python3 manage.py migrate
-	sudo $virtual/python3 manage.py crontab add
+	sudo "$virtual"/python3 manage.py makemigrations
+	sudo "$virtual"/python3 manage.py migrate
+	sudo "$virtual"/python3 manage.py crontab add
 }
 
 ##########
@@ -157,7 +188,7 @@ EOF
 ##########
 sstart(){
 	cd /opt/Wifi/WifiATK/
-	cwd=`pwd`
+	cwd=$(pwd)
 	virtual="$cwd/venv/bin"
 		cat > /etc/systemd/system/uwsgi.service << EOF
 [Unit]
@@ -194,13 +225,16 @@ EOF
 ########
 main(){
 	sudo mkdir -p /opt/Wifi/
-	init_network
+	if [ $networkflag = 0 ];then
+	  init_network
+	  sed -i "s/startflag=0/startflag=1/" "$(realpath "$0")"
+	fi
+
 	init_soft
 	init_kernel
 	init_env
 	init_database
 	sstart
 }
-
 
 main

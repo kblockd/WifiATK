@@ -58,7 +58,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
 # 允许所有的请求头
-CORS_ALLOW_HEADERS = (' * ')
+CORS_ALLOW_HEADERS = '*'
 
 ROOT_URLCONF = 'WifiATK.urls'
 
@@ -90,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         "NAME": "Wifi",
         "USER": "wifi",
-        "PASSWORD": "WifiAttack123.",
+        "PASSWORD": "DEFAULT_SQLPASS",
         "HOST": "127.0.0.1",
         "POST": 3306,
         'OPTIONS': {'charset': 'utf8mb4'},

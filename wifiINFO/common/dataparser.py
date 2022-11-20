@@ -251,7 +251,7 @@ class Dataparser(object):
 
     def cron_activelog(self):
         config = self.config
-        if config.get('MAIN_STATUS') is False:
+        if config.get('MAIN_STATUS') == "False":
             print("Main process doesn't start")
             return
 
@@ -320,7 +320,7 @@ class Dataparser(object):
 
     def cron_data(self):
         config = self.config
-        if config.get('MAIN_STATUS') is False:
+        if config.get('MAIN_STATUS') == "False":
             return False
 
         try:

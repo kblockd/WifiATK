@@ -87,14 +87,7 @@ EOF
 	sudo systemctl stop wpa_supplicant
 	sudo systemctl restart networking
 	sudo echo "nameserver 114.114.114.114" >> /etc/resolv.conf
-}
-
-##############
-#安装基础软件#
-##############
-init_soft(){
-  cd /opt/Wifi/
-  cat > /etc/apt/sources.list << EOF
+	cat > /etc/apt/sources.list << EOF
 deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free
 deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free
@@ -103,8 +96,15 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib non-free
 deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free
-
 EOF
+}
+
+##############
+#安装基础软件#
+##############
+init_soft(){
+  cd /opt/Wifi/
+
 	sudo apt install git vim nginx mariadb-server uwsgi uwsgi-plugin-python3 python3 python3-pip tmux  -y
 	sudo apt install dnsmasq hostapd bc build-essential dkms mdk4 aircrack-ng -y
 	sudo apt install libnl-3-dev libnl-genl-3-dev libssl-dev postfix -y

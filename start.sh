@@ -33,9 +33,12 @@ wpa-psk $wifipass"
     temp=$(ip route show |grep default |grep wlan0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
     eval "$temp"
 
-    sudo systemctl disable avahi-daemon
-	  sudo systemctl disable dhcpcd
-	  sudo systemctl disable wpa_supplicant
+    sudo systemctl disable avahi-daemon && systemctl stop avahi-daemon
+	  sudo systemctl disable dhcpcd && systemctl stop dhcpcd
+	  sudo systemctl disable wpa_supplicant && systemctl stop wpa_supplicant
+
+	  sudo systemctl restart networking
+    sleep 10
 	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
@@ -56,11 +59,16 @@ netmask 255.255.255.0
 gateway $gateway
 $wifi
 EOF
-    sudo ip addr flush dev eth0
+#    sudo ip addr flush dev wlan0
 
-	else
+	else  # X86
 	  temp=$(ip route show |grep default |grep eth0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
 	  eval "$temp"
+
+	  sudo systemctl disable avahi-daemon && systemctl stop avahi-daemon
+	  sudo systemctl disable dhcpcd && systemctl stop dhcpcd
+	  sudo systemctl disable wpa_supplicant && systemctl stop wpa_supplicant
+
 	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
@@ -77,14 +85,10 @@ address $ip
 netmask 255.255.255.0
 gateway $gateway
 EOF
-    sudo ip addr flush dev wlan0
-
+#    sudo ip addr flush dev eth0
 	fi
 
   sudo systemctl enable networking
-  sudo systemctl stop avahi-daemon
-	sudo systemctl stop dhcpcd
-	sudo systemctl stop wpa_supplicant
 	sudo systemctl restart networking
 	sudo echo "nameserver 114.114.114.114" >> /etc/resolv.conf
 	cat > /etc/apt/sources.list << EOF

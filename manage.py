@@ -5,17 +5,17 @@ import sys
 import atexit
 
 
-def on_exit():
-    if 'runserver' in sys.argv or 'uwsgi' in sys.argv:
-        # from wifiINFO.common import config as configer
-        from wifiINFO.common import settings as configer
-
-        config = configer.ConfigManager().initialize()
-        # if wifiINFO.config.get_value('') is not None:
-        #     # global host
-        #     # global dnsmasq
-        #     config.set(HOST_PID=None)
-        config.on_exit()
+# def on_exit():
+#     if 'runserver' in sys.argv or 'uwsgi' in sys.argv:
+#         # from wifiINFO.common import config as configer
+#         from wifiINFO.common import settings as configer
+#
+#         config = configer.ConfigManager().initialize()
+#         # if wifiINFO.config.get_value('') is not None:
+#         #     # global host
+#         #     # global dnsmasq
+#         #     config.set(HOST_PID=None)
+#         config.on_exit()
 
 
 def main():
@@ -33,5 +33,5 @@ def main():
 
 
 if __name__ == '__main__':
-    atexit.register(on_exit)
+    # atexit.register(on_exit)
     main()

@@ -46,6 +46,7 @@ class Activelog(models.Model):
     privacy = models.CharField(db_column='Privacy', max_length=30, blank=True, null=True)  # Field name made lowercase.
     cipher = models.CharField(db_column='Cipher', max_length=30, blank=True, null=True)  # Field name made lowercase.
     authentication = models.CharField(db_column='Authentication', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    power = models.IntegerField(db_column='Power', max_length=11, blank=True, null=True)  # Field name made lowercase.
     ATK_STATUS = models.BooleanField(db_column='ATK_STATUS', blank=True, null=True)  # Field name made lowercase.
 
     @classmethod
@@ -78,6 +79,7 @@ class Wifilog(models.Model):
     privacy = models.CharField(db_column='Privacy', max_length=255, blank=True, null=True)  # Field name made lowercase.
     cipher = models.CharField(db_column='Cipher', max_length=255, blank=True, null=True)  # Field name made lowercase.
     authentication = models.CharField(db_column='Authentication', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    power = models.IntegerField(db_column='Power', max_length=11, blank=True, null=True)  # Field name made lowercase.
     first_time = models.DateTimeField(db_column='First_time')  # Field name made lowercase.
     last_time = models.DateTimeField(db_column='Last_time')  # Field name made lowercase.
 

@@ -1,4 +1,3 @@
-import time
 from wifiINFO.wifi import WifiATKEngine
 
 

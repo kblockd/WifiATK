@@ -39,15 +39,17 @@
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
                         <a-table-column title="authentication" data-index="authentication"
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
+                        <a-table-column title="power" data-index="power"
+                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
                         <a-table-column title="optional" data-index="optional">
                             <template #cell="{ record }">
-                                <a-button type="primary" :disabled="record.client === 'NULL'"
+                                <a-button type="primary" :disabled="record.client === 'NULL' || record.ATK_FLAG === false"
                                           @click="attack(record.bssid)"
-                                          v-if="record.bssid !== attack_bssid || record.ATK_STATUS === false">
+                                          v-if="record.bssid !== attack_bssid || record.ATK_FLAG === 1">
                                     Attack
                                 </a-button>
                                 <a-button type="primary" status="danger"
-                                          v-if="record.bssid === attack_bssid || record.ATK_STATUS === true">
+                                          v-if="record.bssid === attack_bssid || record.ATK_FLAG === 2">
                                     Stop
                                 </a-button>
                             </template>
@@ -78,7 +80,7 @@ export default defineComponent({
             axios.get("../api/active/").then(r => {
                 for (let i of r.data["data"]) {
                     let r = {
-                        "ATK_STATUS": i["ATK_STATUS"],
+                        "ATK_FLAG": i["ATK_FLAG"],
                         "id": i["id"],
                         "authentication": i["authentication"],
                         "bssid": i["bssid"],
@@ -86,6 +88,7 @@ export default defineComponent({
                         "cipher": i["cipher"],
                         "essid": i["essid"],
                         "privacy": i["privacy"],
+                        "power": i["power"],
                     }
                     r["client"] = i["client"] === null ? "NULL" : i["client"].replace(/,/g,'\n')
                     tableData.push(r)

@@ -70,6 +70,12 @@ export default defineComponent({
                 sortDirections: ['ascend', 'descend']
             }
         }, {
+            title: 'power',
+            dataIndex: 'power',
+            sortable: {
+                sortDirections: ['ascend', 'descend']
+            }
+        }, {
             title: 'first_time',
             dataIndex: 'first_time',
             sortable: {

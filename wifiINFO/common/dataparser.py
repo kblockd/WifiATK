@@ -86,7 +86,7 @@ class Dataparser(object):
                 Wifi['privacy'] = utils.is_data_null(data_list[5].strip())
                 Wifi['cipher'] = utils.is_data_null(data_list[6].strip())
                 Wifi['authentication'] = utils.is_data_null(data_list[7].strip())
-
+                Wifi['power'] = utils.is_data_null(data_list[8].strip())
                 Wifis.append(Wifi)
 
             except Exception as e:
@@ -141,7 +141,7 @@ class Dataparser(object):
         old_wifi_query = Wifilog.objects.all()
 
         old_wifi_set = set(
-            old_wifi_query.values_list('bssid', 'essid', 'channel', 'privacy', 'cipher', 'authentication'))
+            old_wifi_query.values_list('bssid', 'essid', 'channel', 'privacy', 'cipher', 'authentication', 'power'))
         old_bssid_set = set(old_wifi_query.values_list('bssid'))
         create_list = []
         update_list = []
@@ -158,6 +158,7 @@ class Dataparser(object):
                         privacy=new_wifi['privacy'],
                         cipher=new_wifi['cipher'],
                         authentication=new_wifi['authentication'],
+                        power=new_wifi['power'],
                         first_time=datetime.datetime.now(),
                         last_time=datetime.datetime.now()
                     )
@@ -170,6 +171,7 @@ class Dataparser(object):
                 temp_value.privacy = new_wifi['privacy']
                 temp_value.cipher = new_wifi['cipher']
                 temp_value.authentication = new_wifi['authentication']
+                temp_value.power = new_wifi['power']
                 temp_value.last_time = datetime.datetime.now()
 
                 update_list.append(temp_value)
@@ -177,7 +179,7 @@ class Dataparser(object):
         try:
             Wifilog.objects.bulk_create(create_list)
             Wifilog.objects.bulk_update(
-                update_list, ['essid', 'channel', 'privacy', 'cipher', 'authentication']
+                update_list, ['essid', 'channel', 'privacy', 'cipher', 'authentication', 'power']
             )
         except ValueError:
             print('\n', '>>>' * 20)
@@ -269,6 +271,7 @@ class Dataparser(object):
             privacy = wifi['privacy']
             cipher = wifi['cipher']
             authentication = wifi['authentication']
+            power = wifi['power']
             essid = wifi['essid'] if wifi['essid'] is not None else ''
             client = []
             for station in new_station_list:
@@ -297,6 +300,7 @@ class Dataparser(object):
                     privacy=privacy,
                     cipher=cipher,
                     authentication=authentication,
+                    power=power,
                     ATK_STATUS=ATK_STATUS
                 )
             )

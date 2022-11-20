@@ -96,8 +96,19 @@ class Activeapi(View):
             model = Activelog.objects.all().order_by(
                 F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
 
+            temp = list(model)
+            atk_bssid = config.get('ATK_BSSID')
+
+            for log in temp:
+                if config.get('ATK_STATUS') is True:
+                    log['ATK_FLAG'] = False
+                elif log['bssid'] == atk_bssid:
+                    log['ATK_FLAG'] = 2
+                else:
+                    log['ATK_FLAG'] = 1
+
             data = dict()
-            data["data"] = list(model)
+            data["data"] = temp
             return JsonResponse(data, safe=False)
         except RuntimeError:
             return False
@@ -160,20 +171,8 @@ class Stationapi(View):
 
 
 class Configapi(View):
-    @staticmethod
-    def success():
-        data = dict()
-        data["data"] = {"success": 1}
-        return JsonResponse(data, safe=False)
 
-    @staticmethod
-    def error():
-        data = dict()
-        data["data"] = {"success": 0}
-        return JsonResponse(data, safe=False)
-
-    @staticmethod
-    def get(request):
+    def get(self, request):
         model = Settings.objects.all()
         data_s = dict()
         for temp in model:
@@ -195,9 +194,9 @@ class Configapi(View):
                     try:
                         monitor.MonitorManager().stop()
                         config.set(MAIN_STATUS=value)  # 关闭
-                        return self.success()
+                        return success()
                     except RuntimeError:
-                        return self.error()
+                        return error()
                 else:
                     try:
                         monitor.MonitorManager().start()
@@ -210,9 +209,9 @@ class Configapi(View):
                             raise ValueError
 
                         config.set(MAIN_STATUS=value)  # 打开
-                        return self.success()
+                        return success()
                     except RuntimeError:
-                        return self.error()
+                        return error()
 
             elif action == 'ATK_STATUS':
 
@@ -222,20 +221,25 @@ class Configapi(View):
                     value = False
                 else:
                     raise ValueError
-                config.set(ATK_STATUS=value)
 
-                data = dict()
-                data["data"] = {"success": 1}
-                return JsonResponse(data, safe=False)
+                pid = config.get('ATK_PID')
+                if pid is not None:
+                    try:
+                        os.kill(pid, signal.SIGKILL)
+                        config.set(ATK_STATUS=value, ATK_PID=None,ATK_BSSID=None)
+                    except KeyError:
+                        return error()
+
+                return success()
 
             elif action == 'LOGNAME':
                 config.set(LOGNAME=value)
-                return self.success()
+                return success()
             else:
                 config.set(**{key: value})
-                return self.success()
+                return success()
         except ValueError:
-            return self.error()
+            return error()
 
 
 def webui(request):
@@ -245,33 +249,45 @@ def webui(request):
 def attack(request, wifi_bssid):
     if 'start' in request.path_info:
         try:
+
+            if config.get('ATK_PID') is not None:
+                return error()
+
             target = Activelog.objects.get(bssid=wifi_bssid)
             pid = attacker.AttackManager().deauth(target.bssid, target.channel).pid
 
-            data = dict()
-            data["data"] = {"success": 1, "pid": pid}
+            return success(pid=pid)
 
-            return JsonResponse(data, safe=False)
         except RuntimeError:
             print(traceback.print_exc())
             print(traceback.format_exc())
 
-            data = dict()
-            data["data"] = {"success": 0}
-            return JsonResponse(data, safe=False)
+            return error()
 
     elif 'stop' in request.path_info:
         try:
             pid = config.get('ATK_PID')
             os.kill(pid, signal.SIGKILL)
 
-            data = dict()
-            data["data"] = {"success": 1}
-            return JsonResponse(data, safe=False)
+            return success()
         except RuntimeError:
             print(traceback.print_exc())
             print(traceback.format_exc())
 
-            data = dict()
-            data["data"] = {"success": 0}
-            return JsonResponse(data, safe=False)
+            return error()
+
+
+def success(**kwargs):
+    data = dict()
+    data["data"] = {"success": 1}
+    for key in kwargs:
+        data[key] = kwargs[key]
+    return JsonResponse(data, safe=False)
+
+
+def error(**kwargs):
+    data = dict()
+    data["data"] = {"success": 0}
+    for key in kwargs:
+        data[key] = kwargs[key]
+    return JsonResponse(data, safe=False)

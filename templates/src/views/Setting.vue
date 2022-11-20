@@ -6,7 +6,7 @@
                     <a-form-item field="MAIN_STATUS" label="MAIN_STATUS">
                         <a-switch v-model="settingData.MAIN_STATUS" @change="change('MAIN_STATUS')"/>
                     </a-form-item>
-                    <a-form-item field="ATK_STATUS" label="ATK_STATUS">
+                    <a-form-item field="ATK_STATUS" label="Auto Attack">
                         <a-switch v-model="settingData.ATK_STATUS" @change="change('ATK_STATUS')"/>
                     </a-form-item>
                     <a-form-item field="MONFACE" label="MONFACE">

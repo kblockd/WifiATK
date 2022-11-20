@@ -1,5 +1,7 @@
 # -*- coding: utf-8
 # import django.apps
+import datetime
+
 from django.apps import AppConfig
 from django.utils.module_loading import autodiscover_modules
 from django.db.models.signals import post_migrate
@@ -34,9 +36,9 @@ class WifiinfoConfig(AppConfig):
 
         os.environ['CMDLINERUNNER_RUN_ONCE'] = 'True'
         post_migrate.connect(init_data, sender=self)
-
         """规避其他功能执行"""
         if 'runserver' in sys.argv or 'uwsgi' in sys.argv:
-            print('Runserver!')
+            date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print('------------------{}:Runserver!------------------'.format(date))
             time.sleep(10)
             autodiscover_modules('start.py')

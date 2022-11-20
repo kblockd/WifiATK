@@ -142,7 +142,7 @@ class ConfigManager(object):
             return False
 
     # @staticmethod
-    def init_conf(self):
+    def on_exit(self):
         self.set(
             LOGNAME=None,
             LOGDIR=None,

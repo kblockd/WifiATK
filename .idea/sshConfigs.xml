@@ -2,7 +2,7 @@
 <project version="4">
   <component name="SshConfigs">
     <configs>
-      <sshConfig authType="PASSWORD" connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="192.168.31.122" id="b9e9a7e9-e170-44dc-b3ad-ffc6b9d1205c" port="22" customName="ssh122" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+      <sshConfig authType="PASSWORD" connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="192.168.31.121" id="b9e9a7e9-e170-44dc-b3ad-ffc6b9d1205c" port="22" customName="ssh122" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
         <option name="customName" value="ssh122" />
       </sshConfig>
     </configs>

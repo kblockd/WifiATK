@@ -83,7 +83,6 @@ EOF
 
 	sudo systemctl enable networking
 	sudo systemctl restart networking
-	sudo apt update && apt upgrade -y
 }
 
 ##############
@@ -227,7 +226,9 @@ main(){
 	sudo mkdir -p /opt/Wifi/
 	if [ $networkflag = 0 ];then
 	  init_network
+	  sudo apt update && apt upgrade -y
 	  sed -i "s/startflag=0/startflag=1/" "$(realpath "$0")"
+	  reboot
 	fi
 
 	init_soft

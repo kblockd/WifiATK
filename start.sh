@@ -70,6 +70,9 @@ EOF
 	  sudo systemctl disable dhcpcd && systemctl stop dhcpcd
 	  sudo systemctl disable wpa_supplicant && systemctl stop wpa_supplicant
 
+	  sudo rm /etc/network/if-up.d/wpasupplicant
+    sudo rm /etc/network/if-pre-up.d/wpasupplicant
+
 	  sudo systemctl restart networking
 
 	  cat > /etc/network/interfaces <<EOF ## tab会被读入导致错误
@@ -92,9 +95,6 @@ EOF
     sudo ip addr flush dev eth0
 
 	fi
-
-  sudo rm /etc/network/if-up.d/wpa_supplicant
-  sudo rm /etc/network/if-preup.d/wpa_supplicant
 
   sudo systemctl enable networking
 	sudo systemctl restart networking

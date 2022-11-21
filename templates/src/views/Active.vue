@@ -128,6 +128,7 @@ export default defineComponent({
             attack,
             stop,
             attack_bssid
+
         }
     }
 })

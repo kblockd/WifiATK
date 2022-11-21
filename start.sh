@@ -236,7 +236,7 @@ WantedBy=multi-user.target
 EOF
 
   sudo systemctl daemon-reload
-  sudo systemctl start uwsgi
+  sudo systemctl restart uwsgi
   sudo systemctl enable uwsgi
 
 }

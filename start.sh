@@ -27,7 +27,7 @@ init_network(){
 	if [ "$plat" = "raspberrypi" ] ; then
 	  read -p "请输入默认连接的Wi-Fi名称:" essid
 	  read -p "请输入默认连接的Wi-Fi密码：" wifipass
-    wifi="wpa-essid $essid
+    wifi="wpa-ssid $essid
 wpa-psk $wifipass"
 
     sudo systemctl disable avahi-daemon && systemctl stop avahi-daemon

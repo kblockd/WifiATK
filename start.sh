@@ -91,7 +91,8 @@ EOF
 
   sudo systemctl enable networking
 	sudo systemctl restart networking
-	sudo echo "nameserver 114.114.114.114" >> /etc/resolv.conf
+	echo "nameserver 114.114.114.114" >> /etc/resolv.conf
+	echo "nameserver 223.6.6.6" >> /etc/resolv.conf
 	cat > /etc/apt/sources.list << EOF
 deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free

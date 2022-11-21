@@ -43,18 +43,18 @@ class ConfigManager(object):
         self._ATK_STATUS = False
 
     def initialize(self):
-        if self.get('MAIN_STATUS') is True:
-            self._MAIN_STATUS = self.get('MAIN_STATUS')
-            self._ATK_STATUS = self.get('ATK_STATUS')
-            self._MONFACE = self.get('MONFACE')
-            self._ATKFACE = self.get('ATKFACE')
-            self._HOSTFACE = self.get('HOSTFACE')
-            self._LOG = self.get('LOG')
-            self._MAIN_PID = self.get('MAIN_PID')
-            self._ATK_BSSID = self.get('ATK_BSSID')
-            self._ATK_PID = self.get('ATK_PID')
-            self._HOST_PID = self.get('HOST_PID')
-            self._DNSMASQ_PID = self.get('DNSMASQ_PID')
+        # if self.get('MAIN_STATUS') == 'True':
+        #     self._MAIN_STATUS = self.get('MAIN_STATUS')
+        #     self._ATK_STATUS = self.get('ATK_STATUS')
+        #     self._MONFACE = self.get('MONFACE')
+        #     self._ATKFACE = self.get('ATKFACE')
+        #     self._HOSTFACE = self.get('HOSTFACE')
+        #     self._LOG = self.get('LOG')
+        #     self._MAIN_PID = self.get('MAIN_PID')
+        #     self._ATK_BSSID = self.get('ATK_BSSID')
+        #     self._ATK_PID = self.get('ATK_PID')
+        #     self._HOST_PID = self.get('HOST_PID')
+        #     self._DNSMASQ_PID = self.get('DNSMASQ_PID')
 
         inters_count = len(self._interfaces)
 

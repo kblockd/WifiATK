@@ -43,13 +43,14 @@
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
                         <a-table-column title="optional" data-index="optional">
                             <template #cell="{ record }">
-                                <a-button type="primary" :disabled="record.client === 'NULL' || record.ATK_FLAG === false"
+                                <a-button type="primary" :disabled="record.client === 'NULL' || record.ATK_FLAG === false "
                                           @click="attack(record.bssid)"
-                                          v-if="record.bssid !== attack_bssid || record.ATK_FLAG === 1">
+                                          v-if="record.bssid !== attack_bssid || record.ATK_STATUS === 1">
                                     Attack
                                 </a-button>
                                 <a-button type="primary" status="danger"
-                                          v-if="record.bssid === attack_bssid || record.ATK_FLAG === 2">
+                                          @click="stop(record.bssid)"
+                                          v-if="record.bssid === attack_bssid || record.ATK_STATUS === 2">
                                     Stop
                                 </a-button>
                             </template>
@@ -95,7 +96,7 @@ export default defineComponent({
                 }
             })
         }
-        const stop = (bassid) => {
+        const stop = (bssid) => {
             axios.get("../api/attack/stop/" + attack_bssid + "/").then(r => {
                 if (r.data["data"]["sucess"] === 1) {
                     Message.success("停止成功")

@@ -100,7 +100,7 @@ class Activeapi(View):
             atk_bssid = config.get('ATK_BSSID')
 
             for log in temp:
-                if config.get('ATK_STATUS') is True:
+                if config.get('ATK_STATUS') == 'True':
                     log['ATK_FLAG'] = False
                 elif log['bssid'] == atk_bssid:
                     log['ATK_FLAG'] = 2

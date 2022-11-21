@@ -263,7 +263,7 @@ class Dataparser(object):
 
         create_list = []
 
-        ATK_BSSID = config.get('ATK_BSSID')
+        # ATK_BSSID = config.get('ATK_BSSID')
 
         for wifi in new_wifi_list:
             bssid = wifi['bssid']
@@ -286,10 +286,10 @@ class Dataparser(object):
             client = utils.is_data_null(','.join(client))
             essid = utils.is_data_null(essid)
 
-            if bssid == ATK_BSSID:
-                ATK_STATUS = True
-            else:
-                ATK_STATUS = False
+            # if bssid == ATK_BSSID:
+            #     ATK_STATUS = True
+            # else:
+            #     ATK_STATUS = False
 
             create_list.append(
                 Activelog(
@@ -301,7 +301,6 @@ class Dataparser(object):
                     cipher=cipher,
                     authentication=authentication,
                     power=power,
-                    ATK_STATUS=ATK_STATUS
                 )
             )
 

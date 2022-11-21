@@ -30,9 +30,6 @@ init_network(){
     wifi="wpa-essid $essid
 wpa-psk $wifipass"
 
-    temp=$(ip route show |grep default |grep wlan0 | awk '{printf("ip=%s; gateway=%s;",$9,$3)}')
-    eval "$temp"
-
     sudo systemctl disable avahi-daemon && systemctl stop avahi-daemon
 	  sudo systemctl disable dhcpcd && systemctl stop dhcpcd
 	  sudo systemctl disable wpa_supplicant && systemctl stop wpa_supplicant
@@ -52,10 +49,6 @@ iface eth0 inet dhcp
 
 auto wlan0
 iface wlan0 inet dhcp
-#iface wlan0 inet static
-#address $ip
-#netmask 255.255.255.0
-#gateway $gateway
 $wifi
 EOF
 
@@ -192,7 +185,7 @@ init_database(){
 	cat > ./start.sql <<EOF
 CREATE DATABASE Wifi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-CREATE USER 'wifi'@'localhost' IDENTIFIED BY 'sqlpass';
+CREATE USER 'wifi'@'localhost' IDENTIFIED BY '$sqlpass';
 CREATE USER 'wifi'@'%' IDENTIFIED BY '$sqlpass';
 
 GRANT ALL ON Wifi.* TO 'wifi'@'localhost';
@@ -254,7 +247,7 @@ main(){
 	if [ $networkflag = 0 ];then
 	  init_network
 	  sudo apt update && apt upgrade -y
-	  sed -i "s/startflag=0/startflag=1/" "$(realpath "$0")"
+	  sed -i "s/^networkflag=0/networkflag=1/" "$(realpath "$0")"
 	  reboot
 	fi
 

@@ -96,19 +96,67 @@ class Activeapi(View):
             model = Activelog.objects.all().order_by(
                 F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
 
-            temp = list(model)
-            atk_bssid = config.get('ATK_BSSID')
+            data_obj = list(model)
+            ATK_STATUS = config.get('ATK_STATUS')
+            atking_bssid = config.get('ATK_BSSID')
 
-            for log in temp:
-                if config.get('ATK_STATUS') == 'True':
+            dumping_bssid = config.get('DUMP_BSSID')
+
+            for log in data_obj:
+                """
+
+                """
+                if ATK_STATUS == 'True':
                     log['ATK_FLAG'] = False
-                elif log['bssid'] == atk_bssid:
+                elif log['bssid'] == atking_bssid:
                     log['ATK_FLAG'] = 2
+                elif log['bssid'] != atking_bssid:
+                    if int(log['power']) > -80:
+                        log['ATK_FLAG'] = 1
+                    else:
+                        log['ATK_FLAG'] = False
                 else:
-                    log['ATK_FLAG'] = 1
+                    log['ATK_FLAG'] = 'Error'
+
+                """
+                    
+                """
+
+                if ATK_STATUS == 'True':
+                    log['DUMP_FLAG'] = False
+                elif log['bssid'] == dumping_bssid:
+                    log['DUMP_FLAG'] = 2
+                elif log['bssid'] != dumping_bssid:
+                    if atking_bssid is None:
+                        if int(log['power']) > -80:
+                            log['DUMP_FLAG'] = 1
+                        else:
+                            log['DUMP_FLAG'] = False
+                    else:
+                        if log['bssid'] == atking_bssid:
+                            log['DUMP_FLAG'] = 1
+                        else:
+                            log['DUMP_FlAG'] = False
+                else:
+                    log['DUMP_FLAG'] = 'Error'
 
             data = dict()
-            data["data"] = temp
+            data["data"] = data_obj
+            """
+            {
+              "id": 23,
+              "bssid": "B0:CC:FE:26:EA:20",
+              "essid": "6816901",
+              "client": null,
+              "channel": "1",
+              "privacy": "WPA2 WPA",
+              "cipher": "CCMP",
+              "authentication": "PSK",
+              "power": "-111",
+              "ATK_FLAG": 1,
+              "DUMP_FLAG": 1
+            }
+            """
             return JsonResponse(data, safe=False)
         except RuntimeError:
             return False
@@ -239,14 +287,14 @@ def webui(request):
 
 
 def attack(request, wifi_bssid):
-    atkman = attacker.AttackManager()
+    atkman = attacker.AttackManager(wifi_bssid)
     if 'start' in request.path_info:
         try:
 
             if config.get('ATK_PID') is not None:
                 return error()
 
-            pid = atkman.attack(wifi_bssid)
+            pid = atkman.attack().pid
 
             return success(pid=pid)
 
@@ -265,6 +313,12 @@ def attack(request, wifi_bssid):
             print(traceback.format_exc())
 
             return error()
+
+
+def dump(request, wifi_bssid):
+    atkman = attacker.AttackManager(wifi_bssid)
+    atkman.dump()
+    return success()
 
 
 def success(**kwargs):

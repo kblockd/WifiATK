@@ -26,9 +26,10 @@ def init_data(sender, **kwargs):
             "HOST_PID": None,
             "DNSMASQ_PID": None,
             "ATK_BSSID": None,
+            "DUMP_BSSID": None,
+            "DUMP_PID": None,
         }
 
-        create_list = []
         for key in conf_list.keys():
             value = conf_list[key]
             Settings.objects.filter(key=key).update_or_create(key=key, value=value)

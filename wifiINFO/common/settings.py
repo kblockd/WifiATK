@@ -42,6 +42,9 @@ class ConfigManager(object):
         self._MAIN_STATUS = False
         self._ATK_STATUS = False
 
+        self._DUMP_BSSID = None
+        self._DUMP_PID = None
+
     def initialize(self):
         # if self.get('MAIN_STATUS') == 'True':
         #     self._MAIN_STATUS = self.get('MAIN_STATUS')
@@ -55,6 +58,7 @@ class ConfigManager(object):
         #     self._ATK_PID = self.get('ATK_PID')
         #     self._HOST_PID = self.get('HOST_PID')
         #     self._DNSMASQ_PID = self.get('DNSMASQ_PID')
+
 
         inters_count = len(self._interfaces)
 
@@ -94,6 +98,8 @@ class ConfigManager(object):
                 ATK_PID=self._ATK_PID,
                 HOST_PID=self._HOST_PID,
                 DNSMASQ_PID=self._DNSMASQ_PID,
+                DUMP_BSSID=self._DUMP_BSSID,
+                DUMP_PID=self._DUMP_PID,
             )
             return self
         except KeyError:
@@ -108,6 +114,7 @@ class ConfigManager(object):
             return False
 
     def set(self, **kwargs):
+        Settings.objects.update_or_create(key="DUMP_BSSID", value=None)
         try:
             update_list = []
             keys = list(kwargs.keys())
@@ -156,7 +163,9 @@ class ConfigManager(object):
             HOST_PID=None,
             DNSMASQ_PID=None,
             MAIN_STATUS=False,
-            ATK_STATUS=False
+            ATK_STATUS=False,
+            DUMP_BSSID=None,
+            DUMP_PID=None,
         )
 
     @staticmethod

@@ -27,21 +27,24 @@
                     <a-form-item field="LOG" label="LOG">
                         <a-input v-model="settingData.LOG" @change="change('LOG')" disabled/>
                     </a-form-item>
-                    <a-form-item field="ATK_BSSID" label="ATK_BSSID">
-                        <a-input v-model="settingData.ATK_BSSID" @change="change('ATK_BSSID')" disabled/>
-                    </a-form-item>
-                    <a-form-item field="ATK_PID" label="ATK_PID">
-                        <a-input v-model="settingData.ATK_PID" @change="change('ATK_PID')" disabled/>
-                    </a-form-item>
-                    <a-form-item field="HOST_PID" label="HOST_PID">
-                        <a-input v-model="settingData.HOST_PID" @change="change('HOST_PID')" disabled/>
-                    </a-form-item>
-                    <a-form-item field="DNSMASQ_PID" label="DNSMASQ_PID">
-                        <a-input v-model="settingData.DNSMASQ_PID" @change="change('DNSMASQ_PID')" disabled/>
-                    </a-form-item>
+<!--                    <a-form-item field="ATK_BSSID" label="ATK_BSSID">-->
+<!--                        <a-input v-model="settingData.ATK_BSSID" @change="change('ATK_BSSID')" disabled/>-->
+<!--                    </a-form-item>-->
+<!--                    <a-form-item field="ATK_PID" label="ATK_PID">-->
+<!--                        <a-input v-model="settingData.ATK_PID" @change="change('ATK_PID')" disabled/>-->
+<!--                    </a-form-item>-->
+<!--                    <a-form-item field="HOST_PID" label="HOST_PID">-->
+<!--                        <a-input v-model="settingData.HOST_PID" @change="change('HOST_PID')" disabled/>-->
+<!--                    </a-form-item>-->
+<!--                    <a-form-item field="DNSMASQ_PID" label="DNSMASQ_PID">-->
+<!--                        <a-input v-model="settingData.DNSMASQ_PID" @change="change('DNSMASQ_PID')" disabled/>-->
+<!--                    </a-form-item>-->
                     <a-form-item field="MAIN_PID" label="MAIN_PID">
                         <a-input v-model="settingData.MAIN_PID" @change="change('MAIN_PID')" disabled/>
                     </a-form-item>
+<!--                    <a-form-item field="DUMP_PID" label="DUMP_PID">-->
+<!--                        <a-input v-model="settingData.DUMP_PID" @change="change('DUMP_PID')" disabled/>-->
+<!--                    </a-form-item>-->
                 </a-form>
             </a-col>
         </div>
@@ -70,6 +73,7 @@ export default defineComponent({
             "MAIN_PID": "",
             "MAIN_STATUS": false,
             "ATK_STATUS": false,
+            "DUMP_PID": "",
         })
         const getData = () => {
             axios.get("../api/config/get/").then(r => {
@@ -85,6 +89,7 @@ export default defineComponent({
                 settingData["HOST_PID"] = r.data["data"]["HOST_PID"]
                 settingData["DNSMASQ_PID"] = r.data["data"]["DNSMASQ_PID"]
                 settingData["MAIN_PID"] = r.data["data"]["MAIN_PID"]
+                settingData["DUMP_PID"] = r.data["data"]["DUMP_PID"]
                 settingData["MAIN_STATUS"] = r.data["data"]["MAIN_STATUS"] === "True"
                 settingData["ATK_STATUS"] = r.data["data"]["ATK_STATUS"] === "True"
             })

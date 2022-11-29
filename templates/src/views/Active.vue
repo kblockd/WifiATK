@@ -22,10 +22,9 @@
                             <template #cell="{ record }">
                               <div class="client" style="white-space: pre-wrap;" >
                                 <a-space v-if="record.client !== 'NULL'">
-<!--                                    <a-tag v-for="c in record.client" >-->
-<!--                                        {{ c }}-->
+
                                   {{ record.client }}
-<!--                                    </a-tag>-->
+
                                 </a-space>
                                 <a v-else-if="record.client === 'NULL'">{{ record.client }} </a>
                               </div>
@@ -35,26 +34,37 @@
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
                         <a-table-column title="privacy" data-index="privacy"
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
-                        <a-table-column title="cipher" data-index="cipher"
-                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
-                        <a-table-column title="authentication" data-index="authentication"
-                                        :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
                         <a-table-column title="power" data-index="power"
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
-                        <a-table-column title="optional" data-index="optional">
+                        <a-table-column title="Attack" data-index="optional">
                             <template #cell="{ record }">
-                                <a-button type="primary" :disabled="record.client === 'NULL' || record.ATK_FLAG === false "
+                                <a-button type="primary" :disabled="record.ATK_FLAG === false"
                                           @click="attack(record.bssid)"
-                                          v-if="record.bssid !== attack_bssid || record.ATK_STATUS === 1">
+                                          v-if="record.ATK_FLAG === 1 || record.ATK_FLAG === false">
                                     Attack
                                 </a-button>
                                 <a-button type="primary" status="danger"
                                           @click="stop(record.bssid)"
-                                          v-if="record.bssid === attack_bssid || record.ATK_STATUS === 2">
+                                          v-if="record.ATK_FLAG === 2">
                                     Stop
                                 </a-button>
                             </template>
                         </a-table-column>
+                      <a-table-column title="Dump" data-index="optional">
+                            <template #cell="{ record }">
+                                <a-button type="primary" :disabled="record.DUMP_FLAG ===  false "
+                                          @click="dump(record.bssid)"
+                                          v-if="record.DUMP_FLAG === 1 || record.DUMP_FLAG ===  false ">
+                                    Dump
+                                </a-button>
+                                <a-button type="primary" status="danger"
+                                          @click="stop(record.bssid)"
+                                          v-if="record.DUMP_FLAG === 2">
+                                    Stop
+                                </a-button>
+                            </template>
+                        </a-table-column>
+
                     </template>
                 </a-table>
             </a-col>
@@ -82,6 +92,7 @@ export default defineComponent({
                 for (let i of r.data["data"]) {
                     let r = {
                         "ATK_FLAG": i["ATK_FLAG"],
+                        "DUMP_FLAG": i["DUMP_FLAG"],
                         "id": i["id"],
                         "authentication": i["authentication"],
                         "bssid": i["bssid"],
@@ -97,10 +108,10 @@ export default defineComponent({
             })
         }
         const stop = (bssid) => {
-            axios.get("../api/attack/stop/" + attack_bssid + "/").then(r => {
+            axios.get("../api/attack/stop/" + bssid + "/").then(r => {
                 if (r.data["data"]["sucess"] === 1) {
                     Message.success("停止成功")
-                    attack_bssid.value = ""
+                    bssid.value = ""
                 } else {
                     Message.error('停止失败')
                 }
@@ -119,6 +130,21 @@ export default defineComponent({
                 }
             })
         }
+
+        const dump = (bssid) => {
+            if (attack_bssid.value !== "") {
+                stop(attack_bssid)
+            }
+            axios.get("../api/dump/start/" + bssid + "/").then(r => {
+                if (r.data["data"]["sucess"] === 1) {
+                    attack_bssid.value = bssid
+                    Message.success("攻击成功")
+                } else {
+                    Message.error('攻击失败')
+                }
+            })
+        }
+
         onMounted(async () => {
             getData()
         })
@@ -126,6 +152,7 @@ export default defineComponent({
             tableData,
             getData,
             attack,
+            dump,
             stop,
             attack_bssid
 

@@ -44,7 +44,7 @@
                                     Attack
                                 </a-button>
                                 <a-button type="primary" status="danger"
-                                          @click="stop(record.bssid)"
+                                          @click="attackStop(record.bssid)"
                                           v-if="record.ATK_FLAG === 2">
                                     Stop
                                 </a-button>
@@ -52,19 +52,18 @@
                         </a-table-column>
                       <a-table-column title="Dump" data-index="optional" :sortable="{sortDirections: ['ascend', 'descend']}" >
                             <template #cell="{ record }">
-                                <a-button type="primary" :disabled="record.DUMP_FLAG ===  false "
+                                <a-button type="primary" :disabled="record.DUMP_FLAG !== 1 || record.client === 'NULL'"
                                           @click="dump(record.bssid)"
-                                          v-if="record.DUMP_FLAG === 1 || record.DUMP_FLAG ===  false ">
+                                          v-if="record.DUMP_FLAG !== 2">
                                     Dump
                                 </a-button>
                                 <a-button type="primary" status="danger"
-                                          @click="stop(record.bssid)"
+                                          @click="dumpStop(record.bssid)"
                                           v-if="record.DUMP_FLAG === 2">
                                     Stop
                                 </a-button>
                             </template>
                         </a-table-column>
-
                     </template>
                 </a-table>
             </a-col>
@@ -73,7 +72,7 @@
 </template>
 
 <script>
-import {defineComponent, reactive, ref, onMounted} from "vue";
+import {defineComponent, reactive, onMounted} from "vue";
 import axios from 'axios'
 import {IconRefresh} from '@arco-design/web-vue/es/icon';
 import {Message} from "@arco-design/web-vue";
@@ -84,7 +83,6 @@ export default defineComponent({
         IconRefresh
     },
     setup() {
-        const attack_bssid = ref("")
         const tableData = reactive([])
         const getData = () => {
             tableData.length = 0
@@ -107,24 +105,21 @@ export default defineComponent({
                 }
             })
         }
-        const stop = (bssid) => {
+        const attackStop = (bssid) => {
             axios.get("../api/attack/stop/" + bssid + "/").then(r => {
-                if (r.data["data"]["sucess"] === 1) {
+              getData()
+                if (r.data["data"]["success"] === 1) {
                     Message.success("停止成功")
-                    bssid.value = ""
                 } else {
                     Message.error('停止失败')
                 }
             })
         }
         const attack = (bssid) => {
-            if (attack_bssid.value !== "") {
-                stop(attack_bssid)
-            }
             axios.get("../api/attack/start/" + bssid + "/").then(r => {
-                if (r.data["data"]["sucess"] === 1) {
-                    attack_bssid.value = bssid
-                    Message.success("攻击成功")
+                getData()
+                if (r.data["data"]["success"] === 1) {
+                    Message.success("攻击启动")
                 } else {
                     Message.error('攻击失败')
                 }
@@ -132,19 +127,26 @@ export default defineComponent({
         }
 
         const dump = (bssid) => {
-            if (attack_bssid.value !== "") {
-                stop(attack_bssid)
-            }
             axios.get("../api/dump/start/" + bssid + "/").then(r => {
-                if (r.data["data"]["sucess"] === 1) {
-                    attack_bssid.value = bssid
-                    Message.success("攻击成功")
+              getData()
+                if (r.data["data"]["success"] === 1) {
+                    Message.success("嗅探启动")
                 } else {
                     Message.error('嗅探失败')
                 }
             })
         }
 
+        const dumpStop = (bssid) => {
+            axios.get("../api/dump/stop/" + bssid + "/").then(r => {
+              getData()
+                if (r.data["data"]["success"] === 1) {
+                    Message.success("嗅探停止成功")
+                } else {
+                    Message.error('嗅探停止失败')
+                }
+            })
+        }
         onMounted(async () => {
             getData()
         })
@@ -153,9 +155,8 @@ export default defineComponent({
             getData,
             attack,
             dump,
-            stop,
-            attack_bssid
-
+            attackStop,
+            dumpStop,
         }
     }
 })

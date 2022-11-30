@@ -44,17 +44,17 @@
                             </template>
                             Active log
                         </a-menu-item>
-                        <a-menu-item key="Station">
-                            <template #icon>
-                                <icon-dice/>
-                            </template>
-                            Station log
-                        </a-menu-item>
                         <a-menu-item key="Wifi">
                             <template #icon>
                                 <icon-wifi/>
                             </template>
                             Wifi log
+                        </a-menu-item>
+                        <a-menu-item key="Station">
+                            <template #icon>
+                                <icon-dice/>
+                            </template>
+                            Station log
                         </a-menu-item>
                         <a-menu-item key="Setting">
                             <template #icon>

@@ -59,7 +59,6 @@ class ConfigManager(object):
         #     self._HOST_PID = self.get('HOST_PID')
         #     self._DNSMASQ_PID = self.get('DNSMASQ_PID')
 
-
         inters_count = len(self._interfaces)
 
         if inters_count == 1:
@@ -114,7 +113,7 @@ class ConfigManager(object):
             return False
 
     def set(self, **kwargs):
-        Settings.objects.update_or_create(key="DUMP_BSSID", value=None)
+        Settings.objects.update_or_create(key="DUMP_BSSID")
         try:
             update_list = []
             keys = list(kwargs.keys())

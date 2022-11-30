@@ -4,6 +4,7 @@ import subprocess
 import traceback
 import time
 import logging
+import psutil
 
 # from wifiINFO.common import config as configer
 from wifiINFO.common import settings as configer
@@ -37,12 +38,11 @@ class MonitorManager(object):
         self.LOG = self.config.get('LOG')
 
     def init_log(self):
-        LOG = self.LOG
 
         try:
             subprocess.Popen([
                 'rm',
-                LOG,
+                self.LOG,
             ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except IOError:
             print(traceback.print_exc())
@@ -108,10 +108,13 @@ class MonitorManager(object):
 
     def stop(self):
         pid = self.config.get('MAIN_PID')
+        if isinstance(pid, str):
+            pid = int(pid)
         if pid:
             try:
-                os.kill(pid, signal.SIGKILL)
-                return True
+                if psutil.pid_exists(pid):
+                    os.kill(pid, signal.SIGKILL)
+                    return True
             except SystemError:
                 print(traceback.print_exc())
                 print(traceback.format_exc())

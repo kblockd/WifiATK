@@ -4,6 +4,7 @@ import importlib
 import os
 import signal
 import traceback
+import psutil
 
 from django.views import View
 from django.db.models import F
@@ -111,7 +112,9 @@ class Activeapi(View):
                 elif log['bssid'] == atking_bssid:
                     log['ATK_FLAG'] = 2
                 elif log['bssid'] != atking_bssid:
-                    if int(log['power']) > -80:
+                    if atking_bssid is not None or dumping_bssid is not None:
+                        log['ATK_FLAG'] = False
+                    elif int(log['power']) > -75:
                         log['ATK_FLAG'] = 1
                     else:
                         log['ATK_FLAG'] = False
@@ -128,7 +131,9 @@ class Activeapi(View):
                     log['DUMP_FLAG'] = 2
                 elif log['bssid'] != dumping_bssid:
                     if atking_bssid is None:
-                        if int(log['power']) > -80:
+                        if dumping_bssid is not None:
+                            log['DUMP_FLAG'] = False
+                        elif int(log['power']) > -75:
                             log['DUMP_FLAG'] = 1
                         else:
                             log['DUMP_FLAG'] = False
@@ -160,17 +165,6 @@ class Activeapi(View):
             return JsonResponse(data, safe=False)
         except RuntimeError:
             return False
-
-    # def post(self, request):
-    #     try:
-    #         model = Activelog.objects.all().order_by(
-    #             F('essid').asc(nulls_last=True), F('client').asc(nulls_last=True)).values()
-    #
-    #         data = dict()
-    #         data["data"] = list(model)
-    #         return JsonResponse(data, safe=False)
-    #     except RuntimeError:
-    #         return False
 
 
 class Wifiapi(View):
@@ -263,7 +257,8 @@ class Configapi(View):
                     pid = config.get('ATK_PID')
                     if pid is not None:
                         try:
-                            os.kill(pid, signal.SIGKILL)
+                            if psutil.pid_exists(pid):
+                                os.kill(pid, signal.SIGKILL)
                         except KeyError:
                             return error()
                     config.set(ATK_STATUS=False, ATK_PID=None, ATK_BSSID=None)
@@ -317,8 +312,31 @@ def attack(request, wifi_bssid):
 
 def dump(request, wifi_bssid):
     atkman = attacker.AttackManager(wifi_bssid)
-    atkman.dump()
-    return success()
+    if 'start' in request.path_info:
+        try:
+
+            if config.get('DUMP_PID') is not None:
+                return error()
+
+            pid = atkman.dump().pid
+
+            return success(pid=pid)
+
+        except RuntimeError:
+            print(traceback.print_exc())
+            print(traceback.format_exc())
+
+            return error()
+
+    elif 'stop' in request.path_info:
+        try:
+            atkman.stop_dump()
+            return success()
+        except RuntimeError:
+            print(traceback.print_exc())
+            print(traceback.format_exc())
+
+            return error()
 
 
 def success(**kwargs):

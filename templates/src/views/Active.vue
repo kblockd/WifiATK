@@ -36,9 +36,9 @@
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
                         <a-table-column title="power" data-index="power"
                                         :sortable="{sortDirections: ['ascend', 'descend']}"></a-table-column>
-                        <a-table-column title="Attack" data-index="optional">
+                        <a-table-column title="Attack" data-index="optional" :sortable="{sortDirections: ['ascend', 'descend']}" >
                             <template #cell="{ record }">
-                                <a-button type="primary" :disabled="record.ATK_FLAG === false"
+                                <a-button type="primary" :disabled="record.ATK_FLAG === false || record.client === 'NULL' "
                                           @click="attack(record.bssid)"
                                           v-if="record.ATK_FLAG === 1 || record.ATK_FLAG === false">
                                     Attack
@@ -50,7 +50,7 @@
                                 </a-button>
                             </template>
                         </a-table-column>
-                      <a-table-column title="Dump" data-index="optional">
+                      <a-table-column title="Dump" data-index="optional" :sortable="{sortDirections: ['ascend', 'descend']}" >
                             <template #cell="{ record }">
                                 <a-button type="primary" :disabled="record.DUMP_FLAG ===  false "
                                           @click="dump(record.bssid)"
@@ -140,7 +140,7 @@ export default defineComponent({
                     attack_bssid.value = bssid
                     Message.success("攻击成功")
                 } else {
-                    Message.error('攻击失败')
+                    Message.error('嗅探失败')
                 }
             })
         }

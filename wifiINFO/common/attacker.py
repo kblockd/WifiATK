@@ -8,6 +8,7 @@ import traceback
 import subprocess
 import random
 import logging
+import psutil
 
 from wifiINFO.models import Activelog
 from wifiINFO.common import settings as configer
@@ -40,7 +41,10 @@ class AttackManager(object):
     def stop_cron(self):
         self.config.set(ATK_STATUS=False)
 
-    def dump(self):
+    def dump(self, cwd="/opt/Wifi/WifiATK/packets/"):  # 此处硬编码
+
+        if not os.path.exists(cwd):
+            os.mkdir(cwd)
 
         try:
             process = subprocess.Popen([
@@ -51,10 +55,12 @@ class AttackManager(object):
                 self.channel,
                 "-w",
                 self.bssid,
-                self.ATKFACE
-            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=False)
+                self.ATKFACE,
+                "--output-format",
+                "cap"
+            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=False, cwd=cwd)
 
-            self.config.set(DUMP_PID=process.pid)
+            self.config.set(DUMP_PID=process.pid, DUMP_BSSID=self.bssid)
 
             return process
 
@@ -63,13 +69,18 @@ class AttackManager(object):
 
     def stop_dump(self):
         pid = self.config.get('DUMP_PID')
+        if isinstance(pid, str):
+            pid = int(pid)
 
         try:
-            if pid is not None:
+            if pid is not None and psutil.pid_exists(pid):
                 os.kill(pid, signal.SIGKILL)
 
                 self.config.set(DUMP_BSSID=None, DUMP_PID=None)
                 return True
+            else:
+                return False
+
         except RuntimeError:
             return False
 
@@ -104,10 +115,6 @@ class AttackManager(object):
             return False
 
     def attack(self):
-        # try:
-        #     target = Activelog.objects.get(bssid=self.bssid)
-        # except KeyError:
-        #     return False
 
         if self.config.get('ATK_PID') is not None:
             return False
@@ -116,11 +123,23 @@ class AttackManager(object):
         return process
 
     def kill(self):
+        """
+                Choose a random Activelog object.
+                :return: Activelog object.
+                :rtype: object
+                """
         try:
             pid = self.config.get('ATK_PID')
-            os.kill(pid, signal.SIGKILL)
-            self.config.set(ATK_PID=None, ATK_BSSID=None)
-            return True
+            if isinstance(pid, str):
+                pid = int(pid)
+
+                if psutil.pid_exists(pid):
+                    os.kill(pid, signal.SIGKILL)
+
+                self.config.set(ATK_PID=None, ATK_BSSID=None)
+                return True
+            else:
+                return False
         except ValueError:
             print('No pid found!')
             return False
@@ -148,6 +167,11 @@ class AttackManager(object):
 
     # @staticmethod
     def random_target(self):
+        """
+        Choose a random Activelog object.
+        :return: Activelog object.
+        :rtype: object
+        """
         try:
             no_essid_ap = Activelog.objects.filter(essid__isnull=True, client__isnull=False).values('bssid', 'channel')
             target = random.choice(no_essid_ap)
